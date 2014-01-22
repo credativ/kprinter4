@@ -1,0 +1,18 @@
+Prototype Version. Mainly untested but functional.
+
+* Prerequisites
+
+Debian Packages: psutils, ghostscript
+
+* Compile
+
+mkdir build
+cd build
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON ..
+make
+
+* Run
+
+build/kprinter --help
+build/kprinter file1.ps [file2.ps] ..
+

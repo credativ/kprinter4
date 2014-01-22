@@ -1,0 +1,33 @@
+# This file is distributed under the same license as the KPRINTER4 package.
+# Marco Nelles <marco.nelles@credativ.de>, 2014.
+msgid ""
+msgstr ""
+"Project-Id-Version: kprinter4\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2014-01-22 09:26+0100\n"
+"PO-Revision-Date: 2014-01-22 07:00+0100\n"
+"Last-Translator: Marco Nelles <marco.nelles@credativ.de>\n"
+"Language-Team: Marco Nelles <marco.nelles@credativ.de>\n"
+"Language: de\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+
+#: main.cpp:43
+msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
+msgstr ""
+
+#: main.cpp:40 main.cpp:80
+msgid "KPrinter4"
+msgstr ""
+
+#: main.cpp:51
+msgid "PostScript document(s) to print"
+msgstr "PostScript-Dokumente zum Drucken"
+
+#: main.cpp:41
+msgid "Simple PostScript document printer"
+msgstr "Einfacher PostScript-Dokumente-Drucker"
+
+#~ msgid "files"
+#~ msgstr "Dateien"
