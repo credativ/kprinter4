@@ -7,11 +7,11 @@ the print setup of legacy applications.
 
 It is modelled after the KDE3-based kprinter application.
 
-# Prerequisites
+### Prerequisites
 
 Debian Packages: psutils, ghostscript
 
-# Compile
+### Compile
 
 mkdir build
 cd build
@@ -19,7 +19,7 @@ cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr ..
 make
 (sudo) make install
 
-# Run
+### Run
 
 build/kprinter --help
 build/kprinter file1.ps [file2.ps] ..
