@@ -33,17 +33,13 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
                               PageSelectPolicy pageSelectPolicy, const QString &pageRange,
                               QPrinter::Orientation documentOrientation) {
 
-  if (fileList.size() < 1) {
-    return -8;
-  }
+  if (fileList.size() < 1) return -8;
 
   for (QStringList::ConstIterator it = fileList.constBegin(); it != fileList.constEnd(); ++it) {
     if (!QFile::exists(*it)) return -7;
   }
 
-  if (printer.printerState() == QPrinter::Aborted || printer.printerState() == QPrinter::Error) {
-    return -6;
-  }
+  if (printer.printerState() == QPrinter::Aborted || printer.printerState() == QPrinter::Error) return -6;
 
   QString exe;
   QStringList argList;
@@ -77,11 +73,10 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
           }
         } else {
           bool res = QFile::copy(fileList[0], printer.outputFileName());
-          if (res) {
+          if (res)
             ret = 0;
-          } else {
+          else
             ret = -5;
-          }
         }
 
       }
@@ -102,7 +97,7 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
 
       exe = "ps2pdf"; argList.clear();
       argList << inputfilename << printer.outputFileName();
-      kDebug() << "Executing" << exe << "with arguments" << argList;
+      qDebug() << "Executing" << exe << "with arguments" << argList;
       ret = KProcess::execute(exe, argList);
 
     } else {
@@ -262,54 +257,6 @@ bool FilePrinter::detectCupsConfig() {
   return FALSE;
 
 }
-
-QSize FilePrinter::psPaperSize(QPrinter &printer) {
-
-  QSize size;
-
-  switch (printer.pageSize()) {
-    case QPrinter::A0:        size = QSize( 2384, 3370 ); break;
-    case QPrinter::A1:        size = QSize( 1684, 2384 ); break;
-    case QPrinter::A2:        size = QSize( 1191, 1684 ); break;
-    case QPrinter::A3:        size = QSize(  842, 1191 ); break;
-    case QPrinter::A4:        size = QSize(  595,  842 ); break;
-    case QPrinter::A5:        size = QSize(  420,  595 ); break;
-    case QPrinter::A6:        size = QSize(  298,  420 ); break;
-    case QPrinter::A7:        size = QSize(  210,  298 ); break;
-    case QPrinter::A8:        size = QSize(  147,  210 ); break;
-    case QPrinter::A9:        size = QSize(  105,  147 ); break;
-    case QPrinter::B0:        size = QSize( 2835, 4008 ); break;
-    case QPrinter::B1:        size = QSize( 2004, 2835 ); break;
-    case QPrinter::B2:        size = QSize( 1417, 2004 ); break;
-    case QPrinter::B3:        size = QSize( 1001, 1417 ); break;
-    case QPrinter::B4:        size = QSize(  709, 1001 ); break;
-    case QPrinter::B5:        size = QSize(  499,  709 ); break;
-    case QPrinter::B6:        size = QSize(  354,  499 ); break;
-    case QPrinter::B7:        size = QSize(  249,  354 ); break;
-    case QPrinter::B8:        size = QSize(  176,  249 ); break;
-    case QPrinter::B9:        size = QSize(  125,  176 ); break;
-    case QPrinter::B10:       size = QSize(   88,  125 ); break;
-    case QPrinter::C5E:       size = QSize(  459,  649 ); break;
-    case QPrinter::Comm10E:   size = QSize(  297,  684 ); break;
-    case QPrinter::DLE:       size = QSize(  312,  624 ); break;
-    case QPrinter::Executive: size = QSize(  522,  756 ); break;
-    case QPrinter::Folio:     size = QSize(  595,  935 ); break;
-    case QPrinter::Ledger:    size = QSize( 1224,  792 ); break;
-    case QPrinter::Legal:     size = QSize(  612, 1008 ); break;
-    case QPrinter::Letter:    size = QSize(  612,  792 ); break;
-    case QPrinter::Tabloid:   size = QSize(  792, 1224 ); break;
-    case QPrinter::Custom:    return QSize( (int) printer.widthMM() * (25.4/72),
-                                            (int) printer.heightMM() * (25.4/72) );
-    default:                  return QSize();
-  }
-
-  if (printer.orientation() == QPrinter::Landscape) size.transpose();
-
-  return size;
-
-}
-
-
 
 QStringList FilePrinter::printArguments(QPrinter &printer, FileDeletePolicy fileDeletePolicy,
                                         PageSelectPolicy pageSelectPolicy, bool useCupsOptions,

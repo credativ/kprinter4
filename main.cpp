@@ -86,11 +86,15 @@ int main (int argc, char *argv[]) {
 
     if (printDialog->exec()) {
 
+      QString pageRange;
+      if ((printer.fromPage() > 0) && (printer.toPage() > 0))
+        pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
+
       ret = FilePrinter::printFiles(printer, psfilenames,
         QPrinter::Portrait,
         FilePrinter::ApplicationDeletesFiles,
         FilePrinter::SystemSelectsPages,
-        QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage()));
+        pageRange);
 
     }
 

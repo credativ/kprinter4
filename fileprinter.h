@@ -156,12 +156,6 @@ public:
      */
     static bool cupsAvailable();
 
-    /** Returns the postscript standard page size
-     *
-     * @returns Returns paper size in ps points
-     */
-    static QSize psPaperSize(QPrinter &printer);
-
 protected:
 
     bool detectCupsService();
