@@ -46,14 +46,22 @@ bool PSDocument::load(const QString& fileName) {
     return FALSE;
   }
 
-  bool ok; int PagesNumPos;
   while (!file.atEnd()) {
-    PagesNumPos = line.indexOf("%%Pages:");
-    if (PagesNumPos > -1) {
-      p_num_pages = line.mid(PagesNumPos+8).trimmed().toInt(&ok);
-      if (ok) break;
+
+    if (line.indexOf("%%Pages:") > -1) {
+      int PagesNumPos = line.indexOf("%%Pages:");
+      p_num_pages = line.mid(PagesNumPos+8).trimmed().toInt();
     }
+
+    if (line.indexOf("<</PageSize") > -1) {
+      int b1 = line.indexOf('[')+1;
+      int b2 = line.indexOf(']')-1;
+      if ((b1 == -1) || (b2 == -1) || (b2 < b1)) continue;
+      p_paper_size = p_calc_paper_size(line.mid(b1, b2-b1).trimmed());
+    }
+
     line = file.readLine();
+
   }
 
   file.close();
@@ -66,7 +74,48 @@ bool PSDocument::load(const QString& fileName) {
 void PSDocument::clear() {
 
   p_filename.clear();
-  p_num_pages = 0;
+  p_num_pages = -1;
+  p_paper_size = DEFAULT_PAPER_SIZE;
   p_is_valid = FALSE;
+
+}
+
+QPrinter::PaperSize PSDocument::p_calc_paper_size(const QString size) {
+
+  QPrinter::PaperSize result;
+
+       if (size == "2384 3370") result = QPrinter::A0;
+  else if (size == "1684 2384") result = QPrinter::A1;
+  else if (size == "1191 1684") result = QPrinter::A2;
+  else if (size == "842 1191")  result = QPrinter::A3;
+  else if (size == "595 842")   result = QPrinter::A4;
+  else if (size == "420 595")   result = QPrinter::A5;
+  else if (size == "298 420")   result = QPrinter::A6;
+  else if (size == "210 298")   result = QPrinter::A7;
+  else if (size == "147 210")   result = QPrinter::A8;
+  else if (size == "105 147")   result = QPrinter::A9;
+  else if (size == "283 4008")  result = QPrinter::B0;
+  else if (size == "2004 2835") result = QPrinter::B1;
+  else if (size == "1417 2004") result = QPrinter::B2;
+  else if (size == "1001 1417") result = QPrinter::B3;
+  else if (size == "709 1001")  result = QPrinter::B4;
+  else if (size == "499 709")   result = QPrinter::B5;
+  else if (size == "354 499")   result = QPrinter::B6;
+  else if (size == "249 254")   result = QPrinter::B7;
+  else if (size == "176 249")   result = QPrinter::B8;
+  else if (size == "125 176")   result = QPrinter::B9;
+  else if (size == "88 125")    result = QPrinter::B10;
+  else if (size == "459 649")   result = QPrinter::C5E;
+  else if (size == "297 684")   result = QPrinter::Comm10E;
+  else if (size == "312 624")   result = QPrinter::DLE;
+  else if (size == "522 756")   result = QPrinter::Executive;
+  else if (size == "595 935")   result = QPrinter::Folio;
+  else if (size == "1224 792")  result = QPrinter::Ledger;
+  else if (size == "612 1008")  result = QPrinter::Legal;
+  else if (size == "612 792")   result = QPrinter::Letter;
+  else if (size == "792 1224")  result = QPrinter::Tabloid;
+  else result = QPrinter::Custom;
+
+  return result;
 
 }

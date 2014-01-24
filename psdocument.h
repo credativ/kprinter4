@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/* This class parses a PostScript-Document constructed by Adobe Reader */
+
 #ifndef PSDOCUMENT_HEADER
 #define PSDOCUMENT_HEADER
 
@@ -25,11 +27,13 @@
 #include <QDir>
 #include <QFileInfo>
 #include <QFile>
+#include <QSize>
+#include <QPrinter>
 
 #include <KDebug>
 #include <KLocale>
 
-#define HEADER_SIZE 1024
+#define DEFAULT_PAPER_SIZE QPrinter::A4
 
 class PSDocument {
 
@@ -43,13 +47,17 @@ public:
   void clear();
 
   inline int numPages() { return p_num_pages; }
+  inline QPrinter::PaperSize paperSize() { return p_paper_size; }
 
 private:
   QString p_filename;
 
   bool p_is_valid;
 
+  QPrinter::PaperSize p_calc_paper_size(const QString size);
+
   int p_num_pages;
+  QPrinter::PaperSize p_paper_size;
 
 };
 

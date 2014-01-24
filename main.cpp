@@ -38,9 +38,48 @@
 /* Return codes:
  * 1: No parameters given. Exit.
  * 2: No PostScript file(s) given. Exit.
+ * 3: All PostScript file(s) invalid. Exit.
  */
 
-int main (int argc, char *argv[]) {
+int showPrintDialogAndPrint(const QString &filename) {
+
+  PSDocument doc;
+  if (!doc.load(filename)) return -1;
+
+  int numPages = doc.numPages();
+  QPrinter::PaperSize paperSize = doc.paperSize();
+
+  QPrinter printer;
+  QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, NULL);
+
+  printDialog->setWindowTitle(i18n("KPrinter4"));
+  if (numPages > 0) {
+    printDialog->setMinMax(1, numPages);
+    printDialog->setFromTo(1, numPages);
+  }
+
+  printer.setPaperSize(paperSize);
+
+  int ret = 0;
+  if (printDialog->exec()) {
+
+    QString pageRange;
+    if ((printer.fromPage() > 0) && (printer.toPage() > 0))
+      pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
+
+    ret = FilePrinter::printFiles(printer, QStringList(filename),
+      QPrinter::Portrait,
+      FilePrinter::ApplicationDeletesFiles,
+      FilePrinter::SystemSelectsPages,
+      pageRange);
+
+  }
+
+  return ret;
+
+}
+
+int main(int argc, char *argv[]) {
 
   KAboutData aboutData("kprinter4", 0, ki18n("KPrinter4"), KPRINTER4_VERSION,
                        ki18n("Simple PostScript document printer"),
@@ -64,39 +103,13 @@ int main (int argc, char *argv[]) {
   if (args->count()) {
 
     PSDocument doc;
-    int numPages = 0;
 
     QStringList psfilenames;
-    for (int i = 0; i < args->count(); ++i) {
-      QString psfilename = args->url(i).path();
-      if (doc.load(psfilename)) {
-        psfilenames.append(psfilename);
-        numPages += doc.numPages();
-      }
-    }
+    int ok = 0;
+    for (int i = 0; i < args->count(); ++i)
+      if (showPrintDialogAndPrint(args->url(i).path()) == 0) ++ok;
 
-    if (psfilenames.count() == 0) return 2;
-
-    QPrinter printer;
-    QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, NULL);
-
-    printDialog->setWindowTitle(i18n("KPrinter4"));
-    printDialog->setMinMax(1, numPages);
-    printDialog->setFromTo(1, numPages);
-
-    if (printDialog->exec()) {
-
-      QString pageRange;
-      if ((printer.fromPage() > 0) && (printer.toPage() > 0))
-        pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
-
-      ret = FilePrinter::printFiles(printer, psfilenames,
-        QPrinter::Portrait,
-        FilePrinter::ApplicationDeletesFiles,
-        FilePrinter::SystemSelectsPages,
-        pageRange);
-
-    }
+    if (ok == 0) ret = 3;
 
   }
 

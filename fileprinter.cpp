@@ -97,7 +97,7 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
 
       exe = "ps2pdf"; argList.clear();
       argList << inputfilename << printer.outputFileName();
-      qDebug() << "Executing" << exe << "with arguments" << argList;
+      kDebug() << "Executing" << exe << "with arguments" << argList;
       ret = KProcess::execute(exe, argList);
 
     } else {
@@ -128,7 +128,7 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
 
     bool useCupsOptions = cupsAvailable();
     argList = printArguments(printer, fileDeletePolicy, pageSelectPolicy,
-                             useCupsOptions, pageRange, exe, documentOrientation ) << fileList;
+                             useCupsOptions, pageRange, exe, documentOrientation) << fileList;
     kDebug() << "Executing" << exe << "with arguments" << argList;
 
     ret = KProcess::execute( exe, argList );
