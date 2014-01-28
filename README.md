@@ -15,7 +15,7 @@ Debian Packages: psutils, ghostscript
 
 mkdir build
 cd build
-cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=/usr ..
+cmake -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_BUILD_TYPE=Debug -DCMAKE_INSTALL_PREFIX=/usr ..
 make
 (sudo) make install
 

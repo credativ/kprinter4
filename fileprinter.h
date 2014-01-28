@@ -83,8 +83,9 @@ public:
      * @param pageRange page range to print if SystemSlectsPages and user chooses Selection in Print Dialog
      *
      * @returns Returns exit code:
+     *          -11 CUPS not detected
      *          -10 if temporary file could not be created
-     *          -9 if lpr not found
+     *          -9 if lp/lpr not found
      *          -8 if empty file name
      *          -7 if unable to find file
      *          -6 if invalid printer state
@@ -96,11 +97,12 @@ public:
      * @since 0.14 (KDE 4.8)
      */
 
-    static int printFiles(QPrinter &printer, const QStringList fileList,
+    static int printFiles(QPrinter& printer, const QStringList fileList,
                           QPrinter::Orientation documentOrientation,
                           FileDeletePolicy fileDeletePolicy = FilePrinter::ApplicationDeletesFiles,
                           PageSelectPolicy pageSelectPolicy = FilePrinter::ApplicationSelectsPages,
-                          const QString &pageRange = QString());
+                          const QString& pageRange = QString(),
+                          const QString& system = QString("autodetect"));
 
     /** Return the list of pages selected by the user in the Print Dialog
      *
@@ -110,8 +112,8 @@ public:
      * @param selectedPageList list of pages to use if Selection option is selected
      * @returns Returns list of pages to print
      */
-    static QList<int> pageList( QPrinter &printer, int lastPage,
-                                int currentPage, const QList<int> &selectedPageList );
+    static QList<int> pageList(QPrinter& printer, int lastPage,
+                               int currentPage, const QList<int>& selectedPageList);
 
     /** Return the list of pages selected by the user in the Print Dialog
      *
@@ -120,7 +122,7 @@ public:
      * @param selectedPageList list of pages to use if Selection option is selected
      * @returns Returns list of pages to print
      */
-    static QList<int> pageList(QPrinter &printer, int lastPage, const QList<int> &selectedPageList);
+    static QList<int> pageList(QPrinter& printer, int lastPage, const QList<int>& selectedPageList);
 
     /** Return the range of pages selected by the user in the Print Dialog
      *
@@ -129,14 +131,14 @@ public:
      * @param selectedPageList list of pages to use if Selection option is selected
      * @returns Returns range of pages to print
      */
-    static QString pageRange(QPrinter &printer, int lastPage, const QList<int> &selectedPageList);
+    static QString pageRange(QPrinter& printer, int lastPage, const QList<int>& selectedPageList);
 
     /** convert a Page List into a Page Range
      *
      * @param pageList list of pages to convert
      * @returns Returns equivalent page range
      */
-    static QString pageListToPageRange(const QList<int> &pageList);
+    static QString pageListToPageRange(const QList<int>& pageList);
 
     /** Return if Ghostscript ps2pdf is available on this system
      *
@@ -161,34 +163,35 @@ protected:
     bool detectCupsService();
     bool detectCupsConfig();
 
-    int doPrintFiles(QPrinter &printer, const QStringList fileList,
+    int doPrintFiles(QPrinter& printer, const QStringList fileList,
                      FileDeletePolicy fileDeletePolicy, PageSelectPolicy pageSelectPolicy,
-                     const QString &pageRange,
-                     QPrinter::Orientation documentOrientation);
+                     const QString& pageRange,
+                     QPrinter::Orientation documentOrientation,
+                     const QString& system);
 
-    QStringList printArguments(QPrinter &printer,
+    QStringList printArguments(QPrinter& printer,
                                FileDeletePolicy fileDeletePolicy, PageSelectPolicy pageSelectPolicy,
-                               bool useCupsOptions, const QString &pageRange, const QString &version,
+                               bool useCupsOptions, const QString& pageRange, const QString& version,
                                QPrinter::Orientation documentOrientation);
 
-    QStringList destination(QPrinter &printer, const QString &version);
-    QStringList copies(QPrinter &printer, const QString &version);
-    QStringList jobname(QPrinter &printer, const QString &version);
-    QStringList deleteFile(QPrinter &printer, FileDeletePolicy fileDeletePolicy,
-                           const QString &version);
-    QStringList pages(QPrinter &printer, PageSelectPolicy pageSelectPolicy,
-                      const QString &pageRange, bool useCupsOptions, const QString &version);
+    QStringList destination(QPrinter& printer, const QString& version);
+    QStringList copies(QPrinter& printer, const QString& version);
+    QStringList jobname(QPrinter& printer, const QString& version);
+    QStringList deleteFile(QPrinter& printer, FileDeletePolicy fileDeletePolicy,
+                           const QString& version);
+    QStringList pages(QPrinter& printer, PageSelectPolicy pageSelectPolicy,
+                      const QString& pageRange, bool useCupsOptions, const QString& version);
 
-    QStringList cupsOptions(QPrinter &printer, QPrinter::Orientation documentOrientation);
-    QStringList optionMedia(QPrinter &printer);
-    QString mediaPageSize(QPrinter &printer);
-    QString mediaPaperSource(QPrinter &printer);
-    QStringList optionOrientation(QPrinter &printer, QPrinter::Orientation documentOrientation);
-    QStringList optionDoubleSidedPrinting(QPrinter &printer);
-    QStringList optionPageOrder(QPrinter &printer);
-    QStringList optionCollateCopies(QPrinter &printer);
-    QStringList optionPageMargins(QPrinter &printer);
-    QStringList optionCupsProperties(QPrinter &printer);
+    QStringList cupsOptions(QPrinter& printer, QPrinter::Orientation documentOrientation);
+    QStringList optionMedia(QPrinter& printer);
+    QString mediaPageSize(QPrinter& printer);
+    QString mediaPaperSource(QPrinter& printer);
+    QStringList optionOrientation(QPrinter& printer, QPrinter::Orientation documentOrientation);
+    QStringList optionDoubleSidedPrinting(QPrinter& printer);
+    QStringList optionPageOrder(QPrinter& printer);
+    QStringList optionCollateCopies(QPrinter& printer);
+    QStringList optionPageMargins(QPrinter& printer);
+    QStringList optionCupsProperties(QPrinter& printer);
 };
 
 #endif

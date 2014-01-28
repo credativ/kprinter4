@@ -22,16 +22,18 @@
 
 #include "fileprinter.h"
 
-int FilePrinter::printFiles(QPrinter &printer, const QStringList fileList,
+int FilePrinter::printFiles(QPrinter& printer, const QStringList fileList,
                             QPrinter::Orientation documentOrientation, FileDeletePolicy fileDeletePolicy,
-                            PageSelectPolicy pageSelectPolicy, const QString &pageRange) {
+                            PageSelectPolicy pageSelectPolicy, const QString& pageRange,
+                            const QString& system) {
   FilePrinter fp;
-  return fp.doPrintFiles(printer, fileList, fileDeletePolicy, pageSelectPolicy, pageRange, documentOrientation);
+  return fp.doPrintFiles(printer, fileList, fileDeletePolicy, pageSelectPolicy, pageRange, documentOrientation, system);
 }
 
-int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDeletePolicy fileDeletePolicy,
-                              PageSelectPolicy pageSelectPolicy, const QString &pageRange,
-                              QPrinter::Orientation documentOrientation) {
+int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDeletePolicy fileDeletePolicy,
+                              PageSelectPolicy pageSelectPolicy, const QString& pageRange,
+                              QPrinter::Orientation documentOrientation,
+                              const QString& system) {
 
   if (fileList.size() < 1) return -8;
 
@@ -43,7 +45,7 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
 
   QString exe;
   QStringList argList;
-  int ret;
+  int ret = 0;
 
   // Print to File if a filename set, assumes only one file
   if (!printer.outputFileName().isEmpty()) {
@@ -108,30 +110,44 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
 
     if (doDeleteFile) QFile::remove(fileList[0]);
 
-  } else {  // Print to a printer via lpr command
-
-    // Decide what executable to use to print with, need the CUPS version of lpr if available
-    // Some distros name the CUPS version of lpr as lpr-cups or lpr.cups so try those first
-    // before default to lpr, or failing that to lp
-
-    if (!KStandardDirs::findExe("lpr-cups").isEmpty()) {
-      exe = "lpr-cups";
-    } else if (!KStandardDirs::findExe("lpr.cups").isEmpty()) {
-      exe = "lpr.cups";
-    } else if ( !KStandardDirs::findExe("lpr").isEmpty()) {
-      exe = "lpr";
-    } else if ( !KStandardDirs::findExe("lp").isEmpty()) {
-      exe = "lp";
-    } else {
-      return -9;
-    }
+  } else {  /* Print to a printer via lpr command */
 
     bool useCupsOptions = cupsAvailable();
+    if ((system == "autodetect") || (system == "cups")) {
+
+      if (!KStandardDirs::findExe("lpr-cups").isEmpty()) {
+        exe = "lpr-cups";
+      } else if (!KStandardDirs::findExe("lpr.cups").isEmpty()) {
+        exe = "lpr.cups";
+      } else if (!KStandardDirs::findExe("lpr").isEmpty()) {
+        exe = "lpr";
+      } else if (!KStandardDirs::findExe("lp").isEmpty()) {
+        exe = "lp";
+      } else {
+        return -9;
+      }
+
+      if ((system == "cups") && (!useCupsOptions)) return -11;
+
+    } else if (system == "lpd") {
+
+      if (!KStandardDirs::findExe("lpr").isEmpty()) {
+        exe = "lpr";
+      } else if (!KStandardDirs::findExe("lp").isEmpty()) {
+        exe = "lp";
+      } else {
+        return -9;
+      }
+
+      useCupsOptions = FALSE;
+
+    }
+
     argList = printArguments(printer, fileDeletePolicy, pageSelectPolicy,
                              useCupsOptions, pageRange, exe, documentOrientation) << fileList;
     kDebug() << "Executing" << exe << "with arguments" << argList;
 
-    ret = KProcess::execute( exe, argList );
+    ret = KProcess::execute(exe, argList);
 
   }
 
@@ -139,12 +155,12 @@ int FilePrinter::doPrintFiles(QPrinter &printer, QStringList fileList, FileDelet
 
 }
 
-QList<int> FilePrinter::pageList(QPrinter &printer, int lastPage, const QList<int> &selectedPageList) {
+QList<int> FilePrinter::pageList(QPrinter& printer, int lastPage, const QList<int>& selectedPageList) {
   return pageList( printer, lastPage, 0, selectedPageList );
 }
 
-QList<int> FilePrinter::pageList(QPrinter &printer, int lastPage,
-                                 int currentPage, const QList<int> &selectedPageList) {
+QList<int> FilePrinter::pageList(QPrinter& printer, int lastPage,
+                                 int currentPage, const QList<int>& selectedPageList) {
 
   if (printer.printRange() == QPrinter::Selection) return selectedPageList;
 
@@ -168,7 +184,7 @@ QList<int> FilePrinter::pageList(QPrinter &printer, int lastPage,
 
 }
 
-QString FilePrinter::pageRange(QPrinter &printer, int lastPage, const QList<int> &selectedPageList) {
+QString FilePrinter::pageRange(QPrinter& printer, int lastPage, const QList<int>& selectedPageList) {
 
   if (printer.printRange() == QPrinter::Selection) return pageListToPageRange(selectedPageList);
 
@@ -179,7 +195,7 @@ QString FilePrinter::pageRange(QPrinter &printer, int lastPage, const QList<int>
 
 }
 
-QString FilePrinter::pageListToPageRange(const QList<int> &pageList) {
+QString FilePrinter::pageListToPageRange(const QList<int>& pageList) {
 
   QString pageRange;
   int count = pageList.count();
@@ -223,11 +239,12 @@ bool FilePrinter::psselectAvailable() {
 
 bool FilePrinter::cupsAvailable() {
 
-  // Ideally we would have access to the private Qt method
-  // QCUPSSupport::cupsAvailable() to do this as it is very complex routine.
-  // However, if CUPS is available then QPrinter::numCopies() will always return 1
-  // whereas if CUPS is not available it will return the real number of copies.
-  // This behaviour is guaranteed never to change, so we can use it as a reliable substitute.
+  /* Ideally we would have access to the private Qt method
+   * QCUPSSupport::cupsAvailable() to do this as it is very complex routine.
+   * However, if CUPS is available then QPrinter::numCopies() will always return 1
+   * whereas if CUPS is not available it will return the real number of copies.
+   * This behaviour is guaranteed never to change, so we can use it as a reliable substitute.
+   */
 
   QPrinter testPrinter;
   testPrinter.setNumCopies(2);
@@ -258,9 +275,9 @@ bool FilePrinter::detectCupsConfig() {
 
 }
 
-QStringList FilePrinter::printArguments(QPrinter &printer, FileDeletePolicy fileDeletePolicy,
+QStringList FilePrinter::printArguments(QPrinter& printer, FileDeletePolicy fileDeletePolicy,
                                         PageSelectPolicy pageSelectPolicy, bool useCupsOptions,
-                                        const QString &pageRange, const QString &version,
+                                        const QString& pageRange, const QString& version,
                                         QPrinter::Orientation documentOrientation) {
 
   QStringList argList;
@@ -286,7 +303,7 @@ QStringList FilePrinter::printArguments(QPrinter &printer, FileDeletePolicy file
 
 }
 
-QStringList FilePrinter::destination(QPrinter &printer, const QString &version) {
+QStringList FilePrinter::destination(QPrinter& printer, const QString& version) {
 
   if (version == "lp") return QStringList("-d") << printer.printerName();
 
@@ -296,7 +313,7 @@ QStringList FilePrinter::destination(QPrinter &printer, const QString &version) 
 
 }
 
-QStringList FilePrinter::copies(QPrinter &printer, const QString &version) {
+QStringList FilePrinter::copies(QPrinter& printer, const QString& version) {
 
   int cp = printer.actualNumCopies();
 
@@ -308,7 +325,7 @@ QStringList FilePrinter::copies(QPrinter &printer, const QString &version) {
 
 }
 
-QStringList FilePrinter::jobname(QPrinter &printer, const QString &version) {
+QStringList FilePrinter::jobname(QPrinter& printer, const QString& version) {
 
   if (!printer.docName().isEmpty()) {
 
@@ -325,7 +342,7 @@ QStringList FilePrinter::jobname(QPrinter &printer, const QString &version) {
 
 }
 
-QStringList FilePrinter::deleteFile(QPrinter &printer, FileDeletePolicy fileDeletePolicy, const QString &version) {
+QStringList FilePrinter::deleteFile(QPrinter& printer, FileDeletePolicy fileDeletePolicy, const QString& version) {
 
   Q_UNUSED(printer);
 
@@ -335,8 +352,8 @@ QStringList FilePrinter::deleteFile(QPrinter &printer, FileDeletePolicy fileDele
 
 }
 
-QStringList FilePrinter::pages(QPrinter &printer, PageSelectPolicy pageSelectPolicy, const QString &pageRange,
-                               bool useCupsOptions, const QString &version) {
+QStringList FilePrinter::pages(QPrinter& printer, PageSelectPolicy pageSelectPolicy, const QString& pageRange,
+                               bool useCupsOptions, const QString& version) {
 
   if (pageSelectPolicy == FilePrinter::SystemSelectsPages) {
 
@@ -361,11 +378,11 @@ QStringList FilePrinter::pages(QPrinter &printer, PageSelectPolicy pageSelectPol
 
   }
 
-  return QStringList(); // all pages
+  return QStringList(); /* all pages */
 
 }
 
-QStringList FilePrinter::cupsOptions(QPrinter &printer, QPrinter::Orientation documentOrientation) {
+QStringList FilePrinter::cupsOptions(QPrinter& printer, QPrinter::Orientation documentOrientation) {
 
   QStringList optionList;
 
@@ -387,7 +404,7 @@ QStringList FilePrinter::cupsOptions(QPrinter &printer, QPrinter::Orientation do
 
 }
 
-QStringList FilePrinter::optionMedia(QPrinter &printer) {
+QStringList FilePrinter::optionMedia(QPrinter& printer) {
 
   if (!mediaPageSize(printer).isEmpty() && !mediaPaperSource(printer).isEmpty()) {
 
@@ -407,7 +424,7 @@ QStringList FilePrinter::optionMedia(QPrinter &printer) {
 
 }
 
-QString FilePrinter::mediaPageSize(QPrinter &printer) {
+QString FilePrinter::mediaPageSize(QPrinter& printer) {
 
   switch (printer.pageSize()) {
 
@@ -448,7 +465,7 @@ QString FilePrinter::mediaPageSize(QPrinter &printer) {
 
 }
 
-QString FilePrinter::mediaPaperSource(QPrinter &printer) {
+QString FilePrinter::mediaPaperSource(QPrinter& printer) {
 
   switch (printer.paperSource()) {
 
@@ -472,7 +489,7 @@ QString FilePrinter::mediaPaperSource(QPrinter &printer) {
 
 }
 
-QStringList FilePrinter::optionOrientation(QPrinter &printer, QPrinter::Orientation documentOrientation) {
+QStringList FilePrinter::optionOrientation(QPrinter& printer, QPrinter::Orientation documentOrientation) {
 
   // portrait and landscape options rotate the document according to the document orientation
   // If we want to print a landscape document as one would expect it, we have to pass the
@@ -487,7 +504,7 @@ QStringList FilePrinter::optionOrientation(QPrinter &printer, QPrinter::Orientat
 
 }
 
-QStringList FilePrinter::optionDoubleSidedPrinting(QPrinter &printer) {
+QStringList FilePrinter::optionDoubleSidedPrinting(QPrinter& printer) {
 
   switch (printer.duplex()) {
 
@@ -504,7 +521,7 @@ QStringList FilePrinter::optionDoubleSidedPrinting(QPrinter &printer) {
 
 }
 
-QStringList FilePrinter::optionPageOrder(QPrinter &printer) {
+QStringList FilePrinter::optionPageOrder(QPrinter& printer) {
 
   if (printer.pageOrder() == QPrinter::LastPageFirst) return QStringList("-o") << "outputorder=reverse";
 
@@ -512,7 +529,7 @@ QStringList FilePrinter::optionPageOrder(QPrinter &printer) {
 
 }
 
-QStringList FilePrinter::optionCollateCopies(QPrinter &printer) {
+QStringList FilePrinter::optionCollateCopies(QPrinter& printer) {
 
   if (printer.collateCopies()) return QStringList("-o") << "Collate=True";
 
@@ -520,7 +537,7 @@ QStringList FilePrinter::optionCollateCopies(QPrinter &printer) {
 
 }
 
-QStringList FilePrinter::optionPageMargins(QPrinter &printer) {
+QStringList FilePrinter::optionPageMargins(QPrinter& printer) {
 
   if (printer.printEngine()->property(QPrintEngine::PPK_PageMargins).isNull()) {
 
@@ -529,7 +546,7 @@ QStringList FilePrinter::optionPageMargins(QPrinter &printer) {
   } else {
 
     qreal l, t, r, b;
-    printer.getPageMargins(&l, &t, &r, &b, QPrinter::Point);
+    printer.getPageMargins(&l,& t,& r,& b, QPrinter::Point);
     return QStringList("-o") << QString("page-left=%1").arg(l)
                              <<  "-o"  << QString("page-top=%1").arg(t)
                              <<  "-o"  << QString("page-right=%1").arg(r)
@@ -539,7 +556,7 @@ QStringList FilePrinter::optionPageMargins(QPrinter &printer) {
 
 }
 
-QStringList FilePrinter::optionCupsProperties(QPrinter &printer) {
+QStringList FilePrinter::optionCupsProperties(QPrinter& printer) {
 
   QStringList dialogOptions = printer.printEngine()->property(QPrintEngine::PrintEnginePropertyKey(0xfe00)).toStringList();
   QStringList cupsOptions;
