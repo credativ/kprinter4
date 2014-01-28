@@ -2,7 +2,7 @@ project(kprinter4)
 
 cmake_minimum_required(VERSION 2.8)
 
-set(KPRINTER4_VERSION "3")
+set(KPRINTER4_VERSION "4")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
 configure_file(config.h.cmake ${CMAKE_BINARY_DIR}/config.h)
