@@ -45,6 +45,7 @@ int showPrintDialogAndPrint(const QString &filename,
                             const QString& printername,
                             const QString& printtitle,
                             const int numCopies,
+                            const QStringList& printerOptions,
                             bool nodialog,
                             const QString& system) {
 
@@ -79,6 +80,7 @@ int showPrintDialogAndPrint(const QString &filename,
       FilePrinter::ApplicationDeletesFiles,
       FilePrinter::SystemSelectsPages,
       pageRange,
+      printerOptions,
       system);
 
   }
@@ -104,7 +106,7 @@ int main(int argc, char *argv[]) {
   options.add("p").add("D <printer>", ki18n("Printer/destination to print on"));
   options.add("J").add("t <title>", ki18n("Title/Name for the print job"));
   options.add("#").add("n <number>", ki18n("Number of copies"), "1");
-  options.add("o <option=value>", ki18n("Printer option"));
+  options.add("o <argument> <option=value>", ki18n("Printer/Job option(s)"));
   options.add("j <mode>", ki18n("Job output mode (gui, console, none)"), "gui");
   options.add("system <printsys>", ki18n("Print system to use (autodetect, lpd, cups)"), "autodetect");
   options.add("stdin", ki18n("Allow printing from STDIN"));
@@ -119,7 +121,6 @@ int main(int argc, char *argv[]) {
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
   if (args->isSet("c")) kWarning() << i18n("Option -c not implemented yet");
-  if (args->isSet("o")) kWarning() << i18n("Option -o not implemented yet");
   if (args->isSet("stdin")) kWarning() << i18n("Option --stdin not implemented yet");
 
   QString printer = args->getOption("D");
@@ -132,6 +133,8 @@ int main(int argc, char *argv[]) {
     int i = args->getOption("n").toInt(&ok);
     if (ok) numCopies = i;
   }
+
+  QStringList printerOptions = args->getOptionList("o");
 
   QString output_mode = args->getOption("j");
   if ((output_mode != "gui") && (output_mode != "console") && (output_mode != "none")) {
@@ -159,6 +162,7 @@ int main(int argc, char *argv[]) {
         args->getOption("D"),
         args->getOption("t"),
         numCopies,
+        printerOptions,
         nodialog,
         system) == 0) {
           ++ok;

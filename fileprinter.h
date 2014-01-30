@@ -102,6 +102,7 @@ public:
                           FileDeletePolicy fileDeletePolicy = FilePrinter::ApplicationDeletesFiles,
                           PageSelectPolicy pageSelectPolicy = FilePrinter::ApplicationSelectsPages,
                           const QString& pageRange = QString(),
+                          const QStringList& printerOptions = QStringList(),
                           const QString& system = QString("autodetect"));
 
     /** Return the list of pages selected by the user in the Print Dialog
@@ -167,11 +168,13 @@ protected:
                      FileDeletePolicy fileDeletePolicy, PageSelectPolicy pageSelectPolicy,
                      const QString& pageRange,
                      QPrinter::Orientation documentOrientation,
+                     const QStringList& printerOptions,
                      const QString& system);
 
     QStringList printArguments(QPrinter& printer,
                                FileDeletePolicy fileDeletePolicy, PageSelectPolicy pageSelectPolicy,
                                bool useCupsOptions, const QString& pageRange, const QString& version,
+                               const QStringList& printerOptions,
                                QPrinter::Orientation documentOrientation);
 
     QStringList destination(QPrinter& printer, const QString& version);
@@ -181,6 +184,7 @@ protected:
                            const QString& version);
     QStringList pages(QPrinter& printer, PageSelectPolicy pageSelectPolicy,
                       const QString& pageRange, bool useCupsOptions, const QString& version);
+    QStringList customPrinterOptions(const QStringList& options);
 
     QStringList cupsOptions(QPrinter& printer, QPrinter::Orientation documentOrientation);
     QStringList optionMedia(QPrinter& printer);

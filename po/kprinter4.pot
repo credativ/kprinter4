@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-28 10:48+0100\n"
+"POT-Creation-Date: 2014-01-30 09:13+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,75 +17,71 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.cpp:68 main.cpp:92
+#: main.cpp:69 main.cpp:94
 msgid "KPrinter4"
 msgstr ""
 
-#: main.cpp:93
+#: main.cpp:95
 msgid "Simple PostScript document printer"
 msgstr ""
 
-#: main.cpp:95
+#: main.cpp:97
 msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
 msgstr ""
 
-#: main.cpp:103
+#: main.cpp:105
 msgid "Make an internal copy of the files to print"
 msgstr ""
 
-#: main.cpp:104
+#: main.cpp:106
 msgid "Printer/destination to print on"
 msgstr ""
 
-#: main.cpp:105
+#: main.cpp:107
 msgid "Title/Name for the print job"
 msgstr ""
 
-#: main.cpp:106
+#: main.cpp:108
 msgid "Number of copies"
 msgstr ""
 
-#: main.cpp:107
-msgid "Printer option"
-msgstr ""
-
-#: main.cpp:108
-msgid "Job output mode (gui, console, none)"
-msgstr ""
-
 #: main.cpp:109
-msgid "Print system to use (autodetect, lpd, cups)"
+msgid "Printer/Job option(s)"
 msgstr ""
 
 #: main.cpp:110
-msgid "Allow printing from STDIN"
+msgid "Job output mode (gui, console, none)"
 msgstr ""
 
 #: main.cpp:111
-msgid "Do not show the print dialog (print directly)"
+msgid "Print system to use (autodetect, lpd, cups)"
 msgstr ""
 
 #: main.cpp:112
+msgid "Allow printing from STDIN"
+msgstr ""
+
+#: main.cpp:113
+msgid "Do not show the print dialog (print directly)"
+msgstr ""
+
+#: main.cpp:114
 msgid "PostScript document(s) to print"
 msgstr ""
 
-#: main.cpp:121
+#: main.cpp:123
 msgid "Option -c not implemented yet"
 msgstr ""
 
-#: main.cpp:122
-msgid "Option -o not implemented yet"
-msgstr ""
-
-#: main.cpp:123
+#: main.cpp:124
 msgid "Option --stdin not implemented yet"
 msgstr ""
 
-#: main.cpp:138
+#: main.cpp:141
 msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
 msgstr ""
 
-#: main.cpp:144
+#: main.cpp:147
 msgid ""
 "Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
 msgstr ""

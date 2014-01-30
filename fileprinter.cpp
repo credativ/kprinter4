@@ -25,14 +25,16 @@
 int FilePrinter::printFiles(QPrinter& printer, const QStringList fileList,
                             QPrinter::Orientation documentOrientation, FileDeletePolicy fileDeletePolicy,
                             PageSelectPolicy pageSelectPolicy, const QString& pageRange,
+                            const QStringList& printerOptions,
                             const QString& system) {
   FilePrinter fp;
-  return fp.doPrintFiles(printer, fileList, fileDeletePolicy, pageSelectPolicy, pageRange, documentOrientation, system);
+  return fp.doPrintFiles(printer, fileList, fileDeletePolicy, pageSelectPolicy, pageRange, documentOrientation, printerOptions, system);
 }
 
 int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDeletePolicy fileDeletePolicy,
                               PageSelectPolicy pageSelectPolicy, const QString& pageRange,
                               QPrinter::Orientation documentOrientation,
+                              const QStringList& printerOptions,
                               const QString& system) {
 
   if (fileList.size() < 1) return -8;
@@ -61,7 +63,7 @@ int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDelet
         exe = "psselect";
         argList << QString("-p%1").arg(pageRange) << fileList[0] << printer.outputFileName();
         kDebug() << "Executing" << exe << "with arguments" << argList;
-        ret = KProcess::execute( exe, argList );
+        ret = KProcess::execute(exe, argList);
 
       } else {
 
@@ -144,7 +146,7 @@ int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDelet
     }
 
     argList = printArguments(printer, fileDeletePolicy, pageSelectPolicy,
-                             useCupsOptions, pageRange, exe, documentOrientation) << fileList;
+                             useCupsOptions, pageRange, exe, printerOptions, documentOrientation) << fileList;
     kDebug() << "Executing" << exe << "with arguments" << argList;
 
     ret = KProcess::execute(exe, argList);
@@ -156,7 +158,7 @@ int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDelet
 }
 
 QList<int> FilePrinter::pageList(QPrinter& printer, int lastPage, const QList<int>& selectedPageList) {
-  return pageList( printer, lastPage, 0, selectedPageList );
+  return pageList(printer, lastPage, 0, selectedPageList);
 }
 
 QList<int> FilePrinter::pageList(QPrinter& printer, int lastPage,
@@ -170,7 +172,7 @@ QList<int> FilePrinter::pageList(QPrinter& printer, int lastPage,
   if (printer.printRange() == QPrinter::PageRange) {
     startPage = printer.fromPage();
     endPage = printer.toPage();
-  } else if ( printer.printRange() == QPrinter::CurrentPage) {
+  } else if (printer.printRange() == QPrinter::CurrentPage) {
     startPage = currentPage;
     endPage = currentPage;
   } else { // All pages
@@ -278,6 +280,7 @@ bool FilePrinter::detectCupsConfig() {
 QStringList FilePrinter::printArguments(QPrinter& printer, FileDeletePolicy fileDeletePolicy,
                                         PageSelectPolicy pageSelectPolicy, bool useCupsOptions,
                                         const QString& pageRange, const QString& version,
+                                        const QStringList& printerOptions,
                                         QPrinter::Orientation documentOrientation) {
 
   QStringList argList;
@@ -291,11 +294,14 @@ QStringList FilePrinter::printArguments(QPrinter& printer, FileDeletePolicy file
   if (!pages(printer, pageSelectPolicy, pageRange, useCupsOptions, version).isEmpty())
     argList << pages(printer, pageSelectPolicy, pageRange, useCupsOptions, version);
 
+  if (!printerOptions.isEmpty())
+    argList << customPrinterOptions(printerOptions);
+
   if (useCupsOptions && !cupsOptions(printer, documentOrientation).isEmpty())
     argList << cupsOptions(printer, documentOrientation);
 
   if (!deleteFile(printer, fileDeletePolicy, version).isEmpty())
-    argList << deleteFile( printer, fileDeletePolicy, version );
+    argList << deleteFile(printer, fileDeletePolicy, version);
 
   if (version == "lp") argList << "--";
 
@@ -362,7 +368,7 @@ QStringList FilePrinter::pages(QPrinter& printer, PageSelectPolicy pageSelectPol
       if (version == "lp") return QStringList("-P") << pageRange ;
 
       if (version.startsWith("lpr") && useCupsOptions)
-        return QStringList("-o") << QString("page-ranges=%1").arg( pageRange );
+        return QStringList("-o") << QString("page-ranges=%1").arg(pageRange);
 
     }
 
@@ -382,11 +388,22 @@ QStringList FilePrinter::pages(QPrinter& printer, PageSelectPolicy pageSelectPol
 
 }
 
+QStringList FilePrinter::customPrinterOptions(const QStringList& options) {
+
+  QStringList result;
+
+  for (int i = 0; i < options.count(); ++i)
+    result << QStringList("-o ") << options[i];
+
+  return result;
+
+}
+
 QStringList FilePrinter::cupsOptions(QPrinter& printer, QPrinter::Orientation documentOrientation) {
 
   QStringList optionList;
 
-  if (!optionMedia(printer).isEmpty() ) optionList << optionMedia( printer );
+  if (!optionMedia(printer).isEmpty() ) optionList << optionMedia(printer);
 
   if (!optionOrientation(printer, documentOrientation ).isEmpty()) optionList << optionOrientation(printer, documentOrientation);
 
@@ -409,7 +426,7 @@ QStringList FilePrinter::optionMedia(QPrinter& printer) {
   if (!mediaPageSize(printer).isEmpty() && !mediaPaperSource(printer).isEmpty()) {
 
     return QStringList("-o") << QString("media=%1,%2").arg(mediaPageSize(printer))
-                                .arg( mediaPaperSource(printer));
+                                .arg(mediaPaperSource(printer));
 
   }
 
