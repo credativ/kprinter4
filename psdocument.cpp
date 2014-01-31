@@ -24,11 +24,32 @@ PSDocumentPage::PSDocumentPage() {
 
 }
 
-PSDocumentPage::PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation) {
+PSDocumentPage::PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation, const bool reversePage) {
 
   p_size = size;
   p_orientation = orientation;
+  p_reverse_page = reversePage;
   p_is_valid = TRUE;
+
+}
+
+PSDocumentPage::PSDocumentPage(const PSDocumentPage& other) {
+
+  p_size = other.p_size;
+  p_orientation = other.p_orientation;
+  p_reverse_page = other.p_reverse_page;
+  p_is_valid = other.p_is_valid;
+
+}
+
+PSDocumentPage& PSDocumentPage::operator=(const PSDocumentPage& other) {
+
+  p_size = other.p_size;
+  p_orientation = other.p_orientation;
+  p_reverse_page = other.p_reverse_page;
+  p_is_valid = other.p_is_valid;
+
+  return *this;
 
 }
 
@@ -40,6 +61,7 @@ void PSDocumentPage::clear() {
 
   p_size = QSize(0, 0);
   p_orientation = DEFAULT_ORIENTATION;
+  p_reverse_page = FALSE;
   p_is_valid = FALSE;
 
 }
@@ -86,18 +108,21 @@ bool PSDocument::load(const QString& fileName) {
   int width, height;
   spectre_document_get_page_size(p_internal_document, &width, &height);
   if ((width > 0) && (height > 0)) {
-    p_page_size = p_calc_page_size(QSize(width, height));
-    kDebug() << "Page Size: " << width << "x" << height << " (" << p_media_page_size(p_page_size) << ")";
+    p_page_size = QSize(width, height);
+    kDebug() << "Page Size: " << width << "x" << height << " (" << sizeToPaperSize(p_page_size) << ")";
   } else {
     kWarning() << "Unable to calculate page size.";
   }
+
   SpectreOrientation orientation = spectre_document_get_orientation(p_internal_document);
-  p_orientation = p_calc_orientation(orientation);
-  kDebug() << "Page Orientation: " << p_media_orientation(p_orientation);
+  bool reversePage;
+  p_orientation = spectreOrientationToOrientation(orientation, &reversePage);
+  kDebug() << "Page Orientation: " << orientationToString(p_orientation);
 
   /* Load the pages now */
   SpectrePage *page;
   SpectreOrientation pageOrientation;
+  QPrinter::Orientation pageOrientation2;
   width = 0; height = 0;
   for (int i = 0; i < numPages; ++i) {
 
@@ -110,7 +135,11 @@ bool PSDocument::load(const QString& fileName) {
       pageOrientation = spectre_page_get_orientation(page);
     }
     spectre_page_free(page);
-    p_pages.append(PSDocumentPage(QSize(width, height), p_calc_orientation(pageOrientation)));
+
+    pageOrientation2 = spectreOrientationToOrientation(pageOrientation, &reversePage);
+    if (pageOrientation2 == QPrinter::Landscape) qSwap(width, height);
+
+    p_pages.append(PSDocumentPage(QSize(width, height), pageOrientation2, reversePage));
 
   }
   kDebug() << "Loaded" << p_pages.count() << "pages";
@@ -133,14 +162,103 @@ void PSDocument::clear() {
 
   p_filename.clear();
   p_pages.clear();
-  p_page_size = DEFAULT_PAGE_SIZE;
+  p_page_size = QSize();
   p_orientation = DEFAULT_ORIENTATION;
   p_is_valid = FALSE;
   p_internal_document = NULL;
 
 }
 
-QPrinter::PaperSize PSDocument::p_calc_page_size(const QSize size) {
+QImage* PSDocument::renderPage(const int pageNum, const QSize& reqSize) {
+
+  if ((pageNum < 0) || (pageNum >= p_pages.count())) return NULL;
+
+  PSDocumentPage page = p_pages[pageNum];
+  int width = reqSize.width();
+  int height = reqSize.height();
+  double magnify = 1.0f;
+  if (page.orientation() == QPrinter::Landscape) {
+    magnify = qMax((double)height / (double)page.size().width(),
+                   (double)width / (double)page.size().height());
+  } else {
+    magnify = qMax((double)width / (double)page.size().width(),
+                   (double)height / (double)page.size().height());
+  }
+
+  SpectrePage *spage = spectre_document_get_page(p_internal_document, pageNum);
+
+  SpectreRenderContext *renderContext = spectre_render_context_new();
+
+  spectre_render_context_set_scale(renderContext, magnify, magnify);
+  spectre_render_context_set_use_platform_fonts(renderContext, TRUE);
+  spectre_render_context_set_antialias_bits(renderContext, 4, 4);
+  /* Do not use spectre_render_context_set_rotation makes some files not render correctly, e.g. bug210499.ps
+   * so we basically do the rendering without any rotation and then rotate to the orientation as needed
+   * spectre_render_context_set_rotation(m_renderContext, req.orientation);
+   */
+
+  unsigned char *data = NULL;
+  int row_length = 0;
+
+  spectre_page_render(spage, renderContext, &data, &row_length);
+
+  // Qt4 needs the missing alpha of QImage::Format_RGB32 to be 0xff
+  if (data && data[3] != 0xff)
+    for (int i = 3; i < row_length * height; i += 4)
+      data[i] = 0xff;
+
+  QImage image;
+
+  if (row_length == width * 4) {
+    image = QImage(data, width, height, QImage::Format_RGB32);
+  } else {
+    // In case this ends up beign very slow we can try with some memmove
+    QImage aux(data, row_length / 4, height, QImage::Format_RGB32);
+    image = QImage(aux.copy(0, 0, width, height));
+  }
+
+  if (page.reversePage()) {
+
+    if (page.orientation() == QPrinter::Portrait) {
+      QTransform m;
+      m.rotate(180);
+      image = image.transformed(m);
+    } else if (page.orientation() == QPrinter::Landscape) {
+      QTransform m;
+      m.rotate(270);
+      image = image.transformed(m);
+    }
+
+  } else {
+
+    if (page.orientation() == QPrinter::Landscape) {
+      QTransform m;
+      m.rotate(90);
+      image = image.transformed(m);
+    }
+
+  }
+
+  spectre_page_free(spage);
+
+  spectre_render_context_free(renderContext);
+
+  QImage *result = new QImage(image.copy());
+
+  if ((result->width() != width) || (result->height() != height)) {
+    kWarning().nospace() << "Generated image does not match wanted size: "
+                    << "[" << result->width() << "x" << result->height() << "] vs requested "
+                    << "[" << width << "x" << height << "]";
+    QImage aux = result->scaled(width, height);
+    delete result;
+    result = new QImage(aux);
+  }
+
+  return result;
+
+}
+
+QPrinter::PaperSize PSDocument::sizeToPaperSize(const QSize size) {
 
   QPrinter::PaperSize result;
 
@@ -181,9 +299,9 @@ QPrinter::PaperSize PSDocument::p_calc_page_size(const QSize size) {
 
 }
 
-QString PSDocument::p_media_page_size(const QPrinter::PaperSize size) {
+QString PSDocument::paperSizeToString(const QPrinter::PaperSize size) {
 
-    switch (size) {
+  switch (size) {
       case QPrinter::A0 :         return "A0";
       case QPrinter::A1 :         return "A1";
       case QPrinter::A2 :         return "A2";
@@ -220,12 +338,14 @@ QString PSDocument::p_media_page_size(const QPrinter::PaperSize size) {
 
 }
 
-QPrinter::Orientation PSDocument::p_calc_orientation(SpectreOrientation orientation) {
+QPrinter::Orientation PSDocument::spectreOrientationToOrientation(SpectreOrientation orientation, bool *reversePage) {
+
+  *reversePage = TRUE;
 
   switch (orientation) {
-    case SPECTRE_ORIENTATION_PORTRAIT :
+    case SPECTRE_ORIENTATION_PORTRAIT : *reversePage = FALSE;
     case SPECTRE_ORIENTATION_REVERSE_PORTRAIT : return QPrinter::Portrait;
-    case SPECTRE_ORIENTATION_LANDSCAPE :
+    case SPECTRE_ORIENTATION_LANDSCAPE : *reversePage = FALSE;
     case SPECTRE_ORIENTATION_REVERSE_LANDSCAPE : return QPrinter::Landscape;
   }
 
@@ -233,7 +353,7 @@ QPrinter::Orientation PSDocument::p_calc_orientation(SpectreOrientation orientat
 
 }
 
-QString PSDocument::p_media_orientation(const QPrinter::Orientation orientation) {
+QString PSDocument::orientationToString(const QPrinter::Orientation orientation) {
 
   switch (orientation) {
     case QPrinter::Portrait :   return i18n("Portrait");

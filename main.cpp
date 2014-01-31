@@ -55,10 +55,10 @@ int showPrintDialogAndPrint(const QString &filename,
     return -1;
   }
   int numPages = doc.numPages();
-  QPrinter::PaperSize pageSize = doc.pageSize();
+  QPrinter::PaperSize paperSize = doc.paperSize();
 
   QPrinter printer;
-  printer.setPaperSize(pageSize);
+  printer.setPaperSize(paperSize);
   if (!printername.isEmpty()) printer.setPrinterName(printername);
   if (!printtitle.isEmpty()) printer.setDocName(printtitle);
   printer.setCopyCount(numCopies);

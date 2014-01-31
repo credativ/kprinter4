@@ -29,24 +29,30 @@
 #include <QFile>
 #include <QSize>
 #include <QPrinter>
+#include <QImage>
 
 #include <KDebug>
 #include <KLocale>
 
 #include <libspectre/spectre.h>
 
-#define DEFAULT_PAGE_SIZE QPrinter::A4
+#define DEFAULT_PAPER_SIZE QPrinter::A4
 #define DEFAULT_ORIENTATION QPrinter::Portrait
+
+class PSDocument; // forward declaration for static members
 
 class PSDocumentPage {
 
 public:
   PSDocumentPage();
-  PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation);
+  PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation, const bool reversePage);
+  PSDocumentPage(const PSDocumentPage& other);
+  PSDocumentPage& operator=(const PSDocumentPage& other);
   ~PSDocumentPage();
 
   inline QSize size() { return p_size; }
   inline QPrinter::Orientation orientation() { return p_orientation; }
+  inline bool reversePage() { return p_reverse_page; }
 
   void clear();
 
@@ -55,6 +61,7 @@ public:
 private:
   QSize p_size;
   QPrinter::Orientation p_orientation;
+  bool p_reverse_page;
 
   bool p_is_valid;
 
@@ -72,13 +79,22 @@ public:
 
   void clear();
 
+  /* Requested size depends on physical parameters of the hardware */
+  QImage* renderPage(const int pageNum, const QSize& reqSize);
+
   inline int numPages() { return p_pages.count(); }
-  inline QPrinter::PaperSize pageSize() { return p_page_size; }
+  inline QSize pageSize() { return p_page_size; }
+  inline QPrinter::PaperSize paperSize() { return sizeToPaperSize(p_page_size); }
   inline QPrinter::Orientation orientation() { return p_orientation; }
 
   inline PSDocumentPage& page(const int num) { if ((num >= 0) || (num < p_pages.count())) return p_pages[num]; }
 
   inline bool isValid() { return p_is_valid; }
+
+  static QPrinter::PaperSize sizeToPaperSize(const QSize size);
+  static QString paperSizeToString(const QPrinter::PaperSize size);
+  static QPrinter::Orientation spectreOrientationToOrientation(SpectreOrientation orientation, bool *reversePage);
+  static QString orientationToString(const QPrinter::Orientation orientation);
 
 private:
   QString p_filename;
@@ -89,12 +105,7 @@ private:
 
   bool p_is_valid;
 
-  QPrinter::PaperSize p_calc_page_size(const QSize size);
-  QString p_media_page_size(const QPrinter::PaperSize size);
-  QPrinter::Orientation p_calc_orientation(SpectreOrientation orientation);
-  QString p_media_orientation(const QPrinter::Orientation orientation);
-
-  QPrinter::PaperSize p_page_size;
+  QSize p_page_size;
   QPrinter::Orientation p_orientation;
 
 };
