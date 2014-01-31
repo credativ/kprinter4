@@ -18,6 +18,34 @@
 
 #include "psdocument.h"
 
+PSDocumentPage::PSDocumentPage() {
+
+  clear();
+
+}
+
+PSDocumentPage::PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation) {
+
+  p_size = size;
+  p_orientation = orientation;
+  p_is_valid = TRUE;
+
+}
+
+PSDocumentPage::~PSDocumentPage() {
+
+}
+
+void PSDocumentPage::clear() {
+
+  p_size = QSize(0, 0);
+  p_orientation = DEFAULT_ORIENTATION;
+  p_is_valid = FALSE;
+
+}
+
+
+
 PSDocument::PSDocument() {
 
 }
@@ -47,12 +75,12 @@ bool PSDocument::load(const QString& fileName) {
     return FALSE;
   }
 
-  p_num_pages = spectre_document_get_n_pages(p_internal_document);
-  if (p_num_pages > 0) {
-    kDebug() << "Page Count: " << p_num_pages;
+  int numPages = spectre_document_get_n_pages(p_internal_document);
+  if (numPages > 0) {
+    kDebug() << "Page Count: " << numPages;
   } else {
     kWarning() << "Unable to calculate number of pages.";
-    p_num_pages = 0;
+    numPages = 0;
   }
 
   int width, height;
@@ -63,6 +91,29 @@ bool PSDocument::load(const QString& fileName) {
   } else {
     kWarning() << "Unable to calculate page size.";
   }
+  SpectreOrientation orientation = spectre_document_get_orientation(p_internal_document);
+  p_orientation = p_calc_orientation(orientation);
+  kDebug() << "Page Orientation: " << p_media_orientation(p_orientation);
+
+  /* Load the pages now */
+  SpectrePage *page;
+  SpectreOrientation pageOrientation;
+  width = 0; height = 0;
+  for (int i = 0; i < numPages; ++i) {
+
+    pageOrientation = SPECTRE_ORIENTATION_PORTRAIT;
+    page = spectre_document_get_page(p_internal_document, i);
+    if (spectre_document_status(p_internal_document)) {
+      kWarning() << "Error getting page " << i << spectre_status_to_string(spectre_document_status(p_internal_document));
+    } else {
+      spectre_page_get_size(page, &width, &height);
+      pageOrientation = spectre_page_get_orientation(page);
+    }
+    spectre_page_free(page);
+    p_pages.append(PSDocumentPage(QSize(width, height), p_calc_orientation(pageOrientation)));
+
+  }
+  kDebug() << "Loaded" << p_pages.count() << "pages";
 
   p_is_valid = TRUE;
   return TRUE;
@@ -81,8 +132,9 @@ bool PSDocument::close() {
 void PSDocument::clear() {
 
   p_filename.clear();
-  p_num_pages = 0;
+  p_pages.clear();
   p_page_size = DEFAULT_PAGE_SIZE;
+  p_orientation = DEFAULT_ORIENTATION;
   p_is_valid = FALSE;
   p_internal_document = NULL;
 
@@ -92,7 +144,7 @@ QPrinter::PaperSize PSDocument::p_calc_page_size(const QSize size) {
 
   QPrinter::PaperSize result;
 
-       if ((size.width() == 2384) && (size.height() == 3370))   result = QPrinter::A0;
+       if ((size.width() == 2384)  && (size.height() == 3370))  result = QPrinter::A0;
   else if ((size.width() == 1684)  && (size.height() == 2384))  result = QPrinter::A1;
   else if ((size.width() == 1191)  && (size.height() == 1684))  result = QPrinter::A2;
   else if ((size.width() == 842)   && (size.height() == 1191))  result = QPrinter::A3;
@@ -132,38 +184,62 @@ QPrinter::PaperSize PSDocument::p_calc_page_size(const QSize size) {
 QString PSDocument::p_media_page_size(const QPrinter::PaperSize size) {
 
     switch (size) {
-      case QPrinter::A0:         return "A0";
-      case QPrinter::A1:         return "A1";
-      case QPrinter::A2:         return "A2";
-      case QPrinter::A3:         return "A3";
-      case QPrinter::A4:         return "A4";
-      case QPrinter::A5:         return "A5";
-      case QPrinter::A6:         return "A6";
-      case QPrinter::A7:         return "A7";
-      case QPrinter::A8:         return "A8";
-      case QPrinter::A9:         return "A9";
-      case QPrinter::B0:         return "B0";
-      case QPrinter::B1:         return "B1";
-      case QPrinter::B10:        return "B10";
-      case QPrinter::B2:         return "B2";
-      case QPrinter::B3:         return "B3";
-      case QPrinter::B4:         return "B4";
-      case QPrinter::B5:         return "B5";
-      case QPrinter::B6:         return "B6";
-      case QPrinter::B7:         return "B7";
-      case QPrinter::B8:         return "B8";
-      case QPrinter::B9:         return "B9";
-      case QPrinter::C5E:        return "C5";
-      case QPrinter::Comm10E:    return "Comm10";
-      case QPrinter::DLE:        return "DL";
-      case QPrinter::Executive:  return "Executive";
-      case QPrinter::Folio:      return "Folio";
-      case QPrinter::Ledger:     return "Ledger";
-      case QPrinter::Legal:      return "Legal";
-      case QPrinter::Letter:     return "Letter";
-      case QPrinter::Tabloid:    return "Tabloid";
-      case QPrinter::Custom:     return QString("Custom");
-      default:                   return QString();
+      case QPrinter::A0 :         return "A0";
+      case QPrinter::A1 :         return "A1";
+      case QPrinter::A2 :         return "A2";
+      case QPrinter::A3 :         return "A3";
+      case QPrinter::A4 :         return "A4";
+      case QPrinter::A5 :         return "A5";
+      case QPrinter::A6 :         return "A6";
+      case QPrinter::A7 :         return "A7";
+      case QPrinter::A8 :         return "A8";
+      case QPrinter::A9 :         return "A9";
+      case QPrinter::B0 :         return "B0";
+      case QPrinter::B1 :         return "B1";
+      case QPrinter::B10 :        return "B10";
+      case QPrinter::B2 :         return "B2";
+      case QPrinter::B3 :         return "B3";
+      case QPrinter::B4 :         return "B4";
+      case QPrinter::B5 :         return "B5";
+      case QPrinter::B6 :         return "B6";
+      case QPrinter::B7 :         return "B7";
+      case QPrinter::B8 :         return "B8";
+      case QPrinter::B9 :         return "B9";
+      case QPrinter::C5E :        return "C5";
+      case QPrinter::Comm10E :    return "Comm10";
+      case QPrinter::DLE :        return "DL";
+      case QPrinter::Executive :  return "Executive";
+      case QPrinter::Folio :      return "Folio";
+      case QPrinter::Ledger :     return "Ledger";
+      case QPrinter::Legal :      return "Legal";
+      case QPrinter::Letter :     return "Letter";
+      case QPrinter::Tabloid :    return "Tabloid";
+      case QPrinter::Custom :     return QString("Custom");
+      default :                   return QString();
     }
+
+}
+
+QPrinter::Orientation PSDocument::p_calc_orientation(SpectreOrientation orientation) {
+
+  switch (orientation) {
+    case SPECTRE_ORIENTATION_PORTRAIT :
+    case SPECTRE_ORIENTATION_REVERSE_PORTRAIT : return QPrinter::Portrait;
+    case SPECTRE_ORIENTATION_LANDSCAPE :
+    case SPECTRE_ORIENTATION_REVERSE_LANDSCAPE : return QPrinter::Landscape;
+  }
+
+  return DEFAULT_ORIENTATION;
+
+}
+
+QString PSDocument::p_media_orientation(const QPrinter::Orientation orientation) {
+
+  switch (orientation) {
+    case QPrinter::Portrait :   return i18n("Portrait");
+    case QPrinter::Landscape :  return i18n("Landscape");
+  }
+
+  return QString();
 
 }

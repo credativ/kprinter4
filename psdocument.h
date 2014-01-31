@@ -36,6 +36,29 @@
 #include <libspectre/spectre.h>
 
 #define DEFAULT_PAGE_SIZE QPrinter::A4
+#define DEFAULT_ORIENTATION QPrinter::Portrait
+
+class PSDocumentPage {
+
+public:
+  PSDocumentPage();
+  PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation);
+  ~PSDocumentPage();
+
+  inline QSize size() { return p_size; }
+  inline QPrinter::Orientation orientation() { return p_orientation; }
+
+  void clear();
+
+  inline bool isValid() { return p_is_valid; }
+
+private:
+  QSize p_size;
+  QPrinter::Orientation p_orientation;
+
+  bool p_is_valid;
+
+};
 
 class PSDocument {
 
@@ -49,21 +72,30 @@ public:
 
   void clear();
 
-  inline int numPages() { return p_num_pages; }
+  inline int numPages() { return p_pages.count(); }
   inline QPrinter::PaperSize pageSize() { return p_page_size; }
+  inline QPrinter::Orientation orientation() { return p_orientation; }
+
+  inline PSDocumentPage& page(const int num) { if ((num >= 0) || (num < p_pages.count())) return p_pages[num]; }
+
+  inline bool isValid() { return p_is_valid; }
 
 private:
   QString p_filename;
 
   SpectreDocument *p_internal_document;
 
+  QList<PSDocumentPage> p_pages;
+
   bool p_is_valid;
 
   QPrinter::PaperSize p_calc_page_size(const QSize size);
   QString p_media_page_size(const QPrinter::PaperSize size);
+  QPrinter::Orientation p_calc_orientation(SpectreOrientation orientation);
+  QString p_media_orientation(const QPrinter::Orientation orientation);
 
-  int p_num_pages;
   QPrinter::PaperSize p_page_size;
+  QPrinter::Orientation p_orientation;
 
 };
 
