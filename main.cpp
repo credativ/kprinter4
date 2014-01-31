@@ -50,12 +50,15 @@ int showPrintDialogAndPrint(const QString &filename,
                             const QString& system) {
 
   PSDocument doc;
-  if (!doc.load(filename)) return -1;
+  if (!doc.load(filename)) {
+    kDebug() << "Loading of document " << filename << " failed.";
+    return -1;
+  }
   int numPages = doc.numPages();
-  QPrinter::PaperSize paperSize = doc.paperSize();
+  QPrinter::PaperSize pageSize = doc.pageSize();
 
   QPrinter printer;
-  printer.setPaperSize(paperSize);
+  printer.setPaperSize(pageSize);
   if (!printername.isEmpty()) printer.setPrinterName(printername);
   if (!printtitle.isEmpty()) printer.setDocName(printtitle);
   printer.setCopyCount(numCopies);
@@ -152,8 +155,6 @@ int main(int argc, char *argv[]) {
 
   int ret = 1;
   if (args->count()) {
-
-    PSDocument doc;
 
     QStringList psfilenames;
     int ok = 0;
