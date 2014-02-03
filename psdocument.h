@@ -80,7 +80,7 @@ public:
   void clear();
 
   /* Requested size depends on physical parameters of the hardware */
-  QImage* renderPage(const int pageNum, const QSize& reqSize);
+  QImage* renderPage(const int pageNum, const int dpiX, const int dpiY);
 
   inline int numPages() { return p_pages.count(); }
   inline QSize pageSize() { return p_page_size; }

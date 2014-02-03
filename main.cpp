@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QTranslator>
 #include <QLibraryInfo>
+#include <QMutex>
 
 #include <KApplication>
 #include <KAboutData>
@@ -41,6 +42,7 @@
  * 1: No parameters given. Exit.
  * 2: No PostScript file(s) given. Exit.
  * 3: All PostScript file(s) invalid. Exit.
+ * 4: Page rendering error. Exit.
  */
 
 int showPrintDialogAndPrint(const QString &filename,
@@ -82,13 +84,71 @@ int showPrintDialogAndPrint(const QString &filename,
   int ret = 0;
   if ((nodialog) || printDialog->exec()) {
 
-    ret = FilePrinter::printFiles(printer, QStringList(filename),
-      QPrinter::Portrait,
-      FilePrinter::ApplicationDeletesFiles,
-      FilePrinter::SystemSelectsPages,
-      pageRange,
-      printerOptions,
-      system);
+    qDebug() << scaleWidget.scaleMode();
+
+    if (scaleWidget.scaleMode() != printScalingOptionsWidget::NoScale) {
+
+      // Render (selected) pages
+
+      QPainter painter;
+      painter.begin(&printer);
+
+      int firstPage = 0;
+      int lastPage = numPages;
+      if (printer.fromPage() > 0) firstPage = printer.fromPage();
+      if (printer.toPage() > 0) lastPage = printer.toPage();
+
+      QMutex mutex;
+
+      QRect viewport = painter.viewport();
+      for (int i = firstPage; i < lastPage; ++i) {
+
+        if (i > 0) printer.newPage();
+
+        mutex.lock();
+
+        QImage *pageImage = doc.renderPage(i, printer.physicalDpiX(), printer.physicalDpiY());
+
+        if (pageImage) {
+
+          QSizeF pageSize = pageImage->size();
+          QSizeF pagePaperSize = printer.paperSize(QPrinter::Point);
+
+          QSize size = scaleWidget.adjustPainterSize(*pageImage, viewport.size(), pageSize, pagePaperSize);
+          QPoint pos = scaleWidget.adjustPainterPosition(size, viewport.size());
+
+          painter.setViewport(pos.x(), pos.y(), size.width(), size.height());
+          painter.setWindow((*pageImage).rect());
+          painter.drawImage(0, 0, *pageImage);
+
+          delete pageImage;
+
+        } else {
+
+          kDebug() << "Rendering page" << i << "failed.";
+          return 4;
+
+        }
+
+        mutex.unlock();
+
+      }
+
+      painter.end();
+
+    } else {
+
+      // Just passthrough to CUPS/LPR/LP
+
+      ret = FilePrinter::printFiles(printer, QStringList(filename),
+        QPrinter::Portrait,
+        FilePrinter::ApplicationDeletesFiles,
+        FilePrinter::SystemSelectsPages,
+        pageRange,
+        printerOptions,
+        system);
+
+    }
 
   }
 

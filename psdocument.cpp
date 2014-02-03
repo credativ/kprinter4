@@ -169,12 +169,15 @@ void PSDocument::clear() {
 
 }
 
-QImage* PSDocument::renderPage(const int pageNum, const QSize& reqSize) {
+QImage* PSDocument::renderPage(const int pageNum, const int dpiX, const int dpiY) {
+
+  Q_UNUSED(dpiX);
+  Q_UNUSED(dpiY);
 
   if ((pageNum < 0) || (pageNum >= p_pages.count())) return NULL;
 
   PSDocumentPage page = p_pages[pageNum];
-  int width = reqSize.width();
+  /*int width = reqSize.width();
   int height = reqSize.height();
   double magnify = 1.0f;
   if (page.orientation() == QPrinter::Landscape) {
@@ -183,13 +186,13 @@ QImage* PSDocument::renderPage(const int pageNum, const QSize& reqSize) {
   } else {
     magnify = qMax((double)width / (double)page.size().width(),
                    (double)height / (double)page.size().height());
-  }
+  }*/
 
   SpectrePage *spage = spectre_document_get_page(p_internal_document, pageNum);
 
   SpectreRenderContext *renderContext = spectre_render_context_new();
 
-  spectre_render_context_set_scale(renderContext, magnify, magnify);
+  /*spectre_render_context_set_scale(renderContext, magnify, magnify);*/
   spectre_render_context_set_use_platform_fonts(renderContext, TRUE);
   spectre_render_context_set_antialias_bits(renderContext, 4, 4);
   /* Do not use spectre_render_context_set_rotation makes some files not render correctly, e.g. bug210499.ps
@@ -202,22 +205,27 @@ QImage* PSDocument::renderPage(const int pageNum, const QSize& reqSize) {
 
   spectre_page_render(spage, renderContext, &data, &row_length);
 
+  int pixelWidth = page.size().width();
+  int pixelHeight = page.size().height();
+
+  kDebug() << "Pixel size of page" << pageNum+1 << ": " << pixelWidth << "x" << pixelHeight;
+
   // Qt4 needs the missing alpha of QImage::Format_RGB32 to be 0xff
   if (data && data[3] != 0xff)
-    for (int i = 3; i < row_length * height; i += 4)
+    for (int i = 3; i < row_length * pixelHeight; i += 4)
       data[i] = 0xff;
 
   QImage image;
 
-  if (row_length == width * 4) {
-    image = QImage(data, width, height, QImage::Format_RGB32);
+  if (row_length == pixelWidth * 4) {
+    image = QImage(data, pixelWidth, pixelHeight, QImage::Format_RGB32);
   } else {
     // In case this ends up beign very slow we can try with some memmove
-    QImage aux(data, row_length / 4, height, QImage::Format_RGB32);
-    image = QImage(aux.copy(0, 0, width, height));
+    QImage aux(data, row_length / 4, pixelHeight, QImage::Format_RGB32);
+    image = QImage(aux.copy(0, 0, pixelWidth, pixelHeight));
   }
 
-  if (page.reversePage()) {
+  /*if (page.reversePage()) {
 
     if (page.orientation() == QPrinter::Portrait) {
       QTransform m;
@@ -237,22 +245,22 @@ QImage* PSDocument::renderPage(const int pageNum, const QSize& reqSize) {
       image = image.transformed(m);
     }
 
+  }*/
+
+  QImage *result = new QImage(image.copy());
+
+  if ((result->width() != pixelWidth) || (result->height() != pixelHeight)) {
+    kWarning().nospace() << "Generated image does not match wanted size: "
+                    << "[" << result->width() << "x" << result->height() << "] vs requested "
+                    << "[" << pixelWidth << "x" << pixelHeight << "]";
+    QImage aux = result->scaled(pixelWidth, pixelHeight);
+    delete result;
+    result = new QImage(aux);
   }
 
   spectre_page_free(spage);
 
   spectre_render_context_free(renderContext);
-
-  QImage *result = new QImage(image.copy());
-
-  if ((result->width() != width) || (result->height() != height)) {
-    kWarning().nospace() << "Generated image does not match wanted size: "
-                    << "[" << result->width() << "x" << result->height() << "] vs requested "
-                    << "[" << width << "x" << height << "]";
-    QImage aux = result->scaled(width, height);
-    delete result;
-    result = new QImage(aux);
-  }
 
   return result;
 
