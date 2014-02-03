@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kprinter4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-01-30 09:13+0100\n"
+"POT-Creation-Date: 2014-02-03 09:25+0100\n"
 "PO-Revision-Date: 2014-01-22 07:00+0100\n"
 "Last-Translator: Marco Nelles <marco.nelles@credativ.de>\n"
 "Language-Team: Marco Nelles <marco.nelles@credativ.de>\n"
@@ -13,74 +13,111 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.cpp:112
+#: rc.cpp:22
+#, no-c-format
+msgid " %"
+msgstr " %"
+
+#: rc.cpp:12
+msgid "&Fit image to page"
+msgstr "Bild auf &Seitengröße einpassen"
+
+#: rc.cpp:9
+msgid "&No scaling"
+msgstr "Keine Skalierung"
+
+#: rc.cpp:18
+msgid "&Scale to:"
+msgstr "&Vergrößern auf:"
+
+#: main.cpp:119
 msgid "Allow printing from STDIN"
 msgstr "Erlaube STDIN-Eingaben"
 
-#: main.cpp:97
+#: main.cpp:104
 msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
 msgstr ""
 
-#: main.cpp:113
+#: main.cpp:120
 msgid "Do not show the print dialog (print directly)"
 msgstr "Druck-Dialog nicht anzeigen (Direkt-Druck)"
 
-#: main.cpp:110
+#: rc.cpp:15
+msgid "Enlarge smaller pages"
+msgstr "K&leine Bilder vergößern"
+
+#: rc.cpp:25
+msgid "Image Position"
+msgstr "Bildposition"
+
+#: main.cpp:117
 msgid "Job output mode (gui, console, none)"
 msgstr "Ausgabe-Modus (gui, console, none)"
 
-#: main.cpp:69 main.cpp:94
+#: main.cpp:76 main.cpp:101
 msgid "KPrinter4"
 msgstr ""
 
-#: main.cpp:105
+#: psdocument.cpp:360
+msgid "Landscape"
+msgstr ""
+
+#: main.cpp:112
 msgid "Make an internal copy of the files to print"
 msgstr "Erzeugt eine interne Kopie der Datei zum Drucken"
 
-#: main.cpp:108
+#: main.cpp:115
 msgid "Number of copies"
 msgstr "Anzahl der Kopien"
 
-#: main.cpp:124
+#: main.cpp:131
 msgid "Option --stdin not implemented yet"
 msgstr "Option --stdin bisher nicht implementiert"
 
-#: main.cpp:123
+#: main.cpp:130
 msgid "Option -c not implemented yet"
 msgstr "Option -c bisher nicht implementiert"
 
-#: main.cpp:114
+#: psdocument.cpp:359
+msgid "Portrait"
+msgstr ""
+
+#: main.cpp:121
 msgid "PostScript document(s) to print"
 msgstr "PostScript-Dokumente zum Drucken"
 
-#: main.cpp:111
+#: main.cpp:118
 msgid "Print system to use (autodetect, lpd, cups)"
 msgstr "Druck-System (autodetect, lpd, cups)"
 
-#: main.cpp:109
+#: main.cpp:116
 msgid "Printer/Job option(s)"
 msgstr "Drucker/Auftrags-Option(en)"
 
-#: main.cpp:106
+#: main.cpp:113
 msgid "Printer/destination to print on"
 msgstr "Drucker/Ziel zum Drucken"
 
-#: main.cpp:95
+#: rc.cpp:3 rc.cpp:6
+msgid "Scaling"
+msgstr "Skalierung"
+
+#: main.cpp:102
 msgid "Simple PostScript document printer"
 msgstr "Einfacher PostScript-Dokumente-Drucker"
 
-#: main.cpp:107
+#: main.cpp:114
 msgid "Title/Name for the print job"
 msgstr "Name des Druckauftrags"
 
-#: main.cpp:147
+#: main.cpp:154
 msgid ""
 "Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
 msgstr ""
 "Unbekannter Wert \"%1\" für Option --system. Benutze Standard-Wert "
 "\"autodetect\"."
 
-#: main.cpp:141
+#: main.cpp:148
 msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
 msgstr "Unbekannter Wert \"%1\" für Option -j. Benutze Standard-Wert \"gui\"."
 

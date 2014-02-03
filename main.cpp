@@ -35,6 +35,8 @@
 #include "psdocument.h"
 #include "fileprinter.h"
 
+#include "widgets/printscalingoptionswidget.h"
+
 /* Return codes:
  * 1: No parameters given. Exit.
  * 2: No PostScript file(s) given. Exit.
@@ -68,7 +70,9 @@ int showPrintDialogAndPrint(const QString &filename,
   if ((printer.fromPage() > 0) && (printer.toPage() > 0))
     pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
 
-  QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, NULL);
+  printScalingOptionsWidget scaleWidget;
+
+  QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, QList<QWidget*>() << &scaleWidget);
   printDialog->setWindowTitle(i18n("KPrinter4"));
   if (numPages > 0) {
     printDialog->setMinMax(1, numPages);

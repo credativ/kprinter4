@@ -33,6 +33,11 @@ set(kprinter4_SRCS
   main.cpp
   fileprinter.cpp
   psdocument.cpp
+  widgets/printscalingoptionswidget.cpp
+)
+
+kde4_add_ui_files(kprinter4_SRCS
+  widgets/printscalingoptionswidgetUI.ui
 )
 
 kde4_add_executable(kprinter4 ${kprinter4_SRCS})
