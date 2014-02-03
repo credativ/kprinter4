@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-03 09:25+0100\n"
+"POT-Creation-Date: 2014-02-03 12:42+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,71 +17,71 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.cpp:76 main.cpp:101
+#: main.cpp:78 main.cpp:161
 msgid "KPrinter4"
 msgstr ""
 
-#: main.cpp:102
+#: main.cpp:162
 msgid "Simple PostScript document printer"
 msgstr ""
 
-#: main.cpp:104
+#: main.cpp:164
 msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
 msgstr ""
 
-#: main.cpp:112
+#: main.cpp:172
 msgid "Make an internal copy of the files to print"
 msgstr ""
 
-#: main.cpp:113
+#: main.cpp:173
 msgid "Printer/destination to print on"
 msgstr ""
 
-#: main.cpp:114
+#: main.cpp:174
 msgid "Title/Name for the print job"
 msgstr ""
 
-#: main.cpp:115
+#: main.cpp:175
 msgid "Number of copies"
 msgstr ""
 
-#: main.cpp:116
+#: main.cpp:176
 msgid "Printer/Job option(s)"
 msgstr ""
 
-#: main.cpp:117
+#: main.cpp:177
 msgid "Job output mode (gui, console, none)"
 msgstr ""
 
-#: main.cpp:118
+#: main.cpp:178
 msgid "Print system to use (autodetect, lpd, cups)"
 msgstr ""
 
-#: main.cpp:119
+#: main.cpp:179
 msgid "Allow printing from STDIN"
 msgstr ""
 
-#: main.cpp:120
+#: main.cpp:180
 msgid "Do not show the print dialog (print directly)"
 msgstr ""
 
-#: main.cpp:121
+#: main.cpp:181
 msgid "PostScript document(s) to print"
 msgstr ""
 
-#: main.cpp:130
+#: main.cpp:190
 msgid "Option -c not implemented yet"
 msgstr ""
 
-#: main.cpp:131
+#: main.cpp:191
 msgid "Option --stdin not implemented yet"
 msgstr ""
 
-#: main.cpp:148
+#: main.cpp:208
 msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
 msgstr ""
 
-#: main.cpp:154
+#: main.cpp:214
 msgid ""
 "Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
 msgstr ""
@@ -95,7 +95,7 @@ msgid "&No scaling"
 msgstr ""
 
 #: rc.cpp:12
-msgid "&Fit image to page"
+msgid "&Fit document to page"
 msgstr ""
 
 #: rc.cpp:15
@@ -112,13 +112,13 @@ msgid " %"
 msgstr ""
 
 #: rc.cpp:25
-msgid "Image Position"
+msgid "Document Position"
 msgstr ""
 
-#: psdocument.cpp:359
+#: psdocument.cpp:367
 msgid "Portrait"
 msgstr ""
 
-#: psdocument.cpp:360
+#: psdocument.cpp:368
 msgid "Landscape"
 msgstr ""

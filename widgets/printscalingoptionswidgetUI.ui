@@ -33,7 +33,7 @@
       <item>
        <widget class="QRadioButton" name="mScaleToPage">
         <property name="text">
-         <string>&amp;Fit image to page</string>
+         <string>&amp;Fit document to page</string>
         </property>
         <property name="checked">
          <bool>false</bool>
@@ -179,7 +179,7 @@
    <item row="0" column="0">
     <widget class="QGroupBox" name="groupBox_2">
      <property name="title">
-      <string>Image Position</string>
+      <string>Document Position</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
