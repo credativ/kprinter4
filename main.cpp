@@ -44,6 +44,7 @@
  * 2: No PostScript file(s) given. Exit.
  * 3: All PostScript file(s) invalid. Exit.
  * 4: Page rendering error. Exit.
+ * 5: Poster print error. Exit.
  */
 
 int showPrintDialogAndPrint(const QString &filename,
@@ -138,10 +139,60 @@ int showPrintDialogAndPrint(const QString &filename,
 
     } else {
 
+      QString filenameToPrint = filename;
+
+      if (posterWidget.isEnabled()) {
+
+        // Poster print
+
+        QMap<QString, QString> settings;
+        posterWidget.getOptions(settings);
+
+        //QString media = settings["_kde-poster-media"];
+        QString size = settings["_kde-poster-size"];
+        QString cut = settings["_kde-poster-cut"];
+        QString select = settings["_kde-poster-select"];
+        QString printSize = settings["kde-printsize"];
+
+        QStringList args;
+
+        if (!printSize.isEmpty()) {
+          args << QString("-m") << printSize;
+        }
+        if (!size.isEmpty()) {
+          args << QString("-p") << size;
+        }
+        if (!cut.isEmpty()) {
+          args << QString("-c") << QString("%1%").arg(cut);
+        }
+        if (!select.isEmpty()) {
+          args << QString("-P") << select;
+        }
+
+        KTemporaryFile tf;
+        tf.setSuffix(".ps");
+        if (!tf.open()) {
+          kDebug() << "Poster print failed. Creation of temporary file" << tf.fileName() << "failed.";
+          return 5;
+        }
+
+        args << filename << QString("-o") << tf.fileName();
+
+        kDebug() << "Executing" << "/usr/bin/poster" << "with arguments" << args;
+
+        if (KProcess::execute("/usr/bin/poster", args) != 0) {
+          kDebug() << "Poster print failed: Execution of poster failed.";
+          return 5;
+        }
+
+        filenameToPrint = tf.fileName();
+
+      }
+
       // Just passthrough to CUPS/LPR/LP
 
-      ret = FilePrinter::printFiles(printer, QStringList(filename),
-        QPrinter::Portrait,
+      ret = FilePrinter::printFiles(printer, QStringList(filenameToPrint),
+        doc.orientation(),
         FilePrinter::ApplicationDeletesFiles,
         FilePrinter::SystemSelectsPages,
         pageRange,
