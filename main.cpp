@@ -141,6 +141,7 @@ int showPrintDialogAndPrint(const QString &filename,
 
       QString filenameToPrint = filename;
 
+      KTemporaryFile tf;
       if (posterWidget.isEnabled()) {
 
         // Poster print
@@ -169,7 +170,7 @@ int showPrintDialogAndPrint(const QString &filename,
           args << QString("-P") << select;
         }
 
-        KTemporaryFile tf;
+        tf.setAutoRemove(FALSE);
         tf.setSuffix(".ps");
         if (!tf.open()) {
           kDebug() << "Poster print failed. Creation of temporary file" << tf.fileName() << "failed.";
