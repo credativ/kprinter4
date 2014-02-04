@@ -32,8 +32,11 @@ include_directories(
 set(kprinter4_SRCS
   main.cpp
   fileprinter.cpp
-  psdocument.cpp
+  postscriptdocument.cpp
+  utils/papersizeutils.cpp
   widgets/printscalingoptionswidget.cpp
+  widgets/posterwidget.cpp
+  widgets/posterpreview.cpp
 )
 
 kde4_add_ui_files(kprinter4_SRCS

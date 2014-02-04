@@ -33,10 +33,11 @@
 #include <KLocale>
 
 #include "config.h"
-#include "psdocument.h"
+#include "postscriptdocument.h"
 #include "fileprinter.h"
 
 #include "widgets/printscalingoptionswidget.h"
+#include "widgets/posterwidget.h"
 
 /* Return codes:
  * 1: No parameters given. Exit.
@@ -53,7 +54,7 @@ int showPrintDialogAndPrint(const QString &filename,
                             bool nodialog,
                             const QString& system) {
 
-  PSDocument doc;
+  PostScriptDocument doc;
   if (!doc.load(filename)) {
     kDebug() << "Loading of document " << filename << " failed.";
     return -1;
@@ -73,8 +74,9 @@ int showPrintDialogAndPrint(const QString &filename,
     pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
 
   printScalingOptionsWidget scaleWidget;
+  PosterWidget posterWidget;
 
-  QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, QList<QWidget*>() << &scaleWidget);
+  QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, QList<QWidget*>() << &scaleWidget << &posterWidget);
   printDialog->setWindowTitle(i18n("KPrinter4"));
   if (numPages > 0) {
     printDialog->setMinMax(1, numPages);

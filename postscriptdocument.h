@@ -36,19 +36,21 @@
 
 #include <libspectre/spectre.h>
 
+#include <utils/papersizeutils.h>
+
 #define DEFAULT_PAPER_SIZE QPrinter::A4
 #define DEFAULT_ORIENTATION QPrinter::Portrait
 
-class PSDocument; // forward declaration for static members
+class PostScriptDocument; // forward declaration for static members
 
-class PSDocumentPage {
+class PostScriptDocumentPage {
 
 public:
-  PSDocumentPage();
-  PSDocumentPage(const QSize& size, const QPrinter::Orientation orientation, const bool reversePage);
-  PSDocumentPage(const PSDocumentPage& other);
-  PSDocumentPage& operator=(const PSDocumentPage& other);
-  ~PSDocumentPage();
+  PostScriptDocumentPage();
+  PostScriptDocumentPage(const QSize& size, const QPrinter::Orientation orientation, const bool reversePage);
+  PostScriptDocumentPage(const PostScriptDocumentPage& other);
+  PostScriptDocumentPage& operator=(const PostScriptDocumentPage& other);
+  ~PostScriptDocumentPage();
 
   inline QSize size() { return p_size; }
   inline QPrinter::Orientation orientation() { return p_orientation; }
@@ -67,12 +69,12 @@ private:
 
 };
 
-class PSDocument {
+class PostScriptDocument {
 
 public:
-  PSDocument();
-  PSDocument(const QString& fileName);
-  ~PSDocument();
+  PostScriptDocument();
+  PostScriptDocument(const QString& fileName);
+  ~PostScriptDocument();
 
   bool load(const QString& fileName);
   bool close();
@@ -84,24 +86,21 @@ public:
 
   inline int numPages() { return p_pages.count(); }
   inline QSize pageSize() { return p_page_size; }
-  inline QPrinter::PaperSize paperSize() { return sizeToPaperSize(p_page_size); }
+  inline QPrinter::PaperSize paperSize() { return PaperSizeUtils::sizeToPaperSize(p_page_size); }
   inline QPrinter::Orientation orientation() { return p_orientation; }
 
-  inline PSDocumentPage& page(const int num) { if ((num >= 0) || (num < p_pages.count())) return p_pages[num]; }
+  inline PostScriptDocumentPage& page(const int num) { if ((num >= 0) || (num < p_pages.count())) return p_pages[num]; }
 
   inline bool isValid() { return p_is_valid; }
 
-  static QPrinter::PaperSize sizeToPaperSize(const QSize size);
-  static QString paperSizeToString(const QPrinter::PaperSize size);
   static QPrinter::Orientation spectreOrientationToOrientation(SpectreOrientation orientation, bool *reversePage);
-  static QString orientationToString(const QPrinter::Orientation orientation);
 
 private:
   QString p_filename;
 
   SpectreDocument *p_internal_document;
 
-  QList<PSDocumentPage> p_pages;
+  QList<PostScriptDocumentPage> p_pages;
 
   bool p_is_valid;
 
