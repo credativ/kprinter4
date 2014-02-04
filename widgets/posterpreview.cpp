@@ -306,5 +306,3 @@ void PosterPreview::emitSelectedPages()
 	}
 	emit selectionChanged( s );
 }
-
-//#include "posterpreview.moc"

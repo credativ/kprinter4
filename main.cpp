@@ -86,8 +86,6 @@ int showPrintDialogAndPrint(const QString &filename,
   int ret = 0;
   if ((nodialog) || printDialog->exec()) {
 
-    qDebug() << scaleWidget.scaleMode();
-
     if (scaleWidget.scaleMode() != printScalingOptionsWidget::NoScale) {
 
       // Render (selected) pages
@@ -120,7 +118,7 @@ int showPrintDialogAndPrint(const QString &filename,
           QPoint pos = scaleWidget.adjustPainterPosition(size, viewport.size());
 
           painter.setViewport(pos.x(), pos.y(), size.width(), size.height());
-          painter.setWindow((*pageImage).rect());
+          painter.setWindow(pageImage->rect());
           painter.drawImage(0, 0, *pageImage);
 
           delete pageImage;

@@ -481,5 +481,3 @@ void PosterWidget::slotLockToggled( bool on )
 	if ( on )
         m_printsize->setCurrentIndex( m_postersize->currentIndex() );
 }
-
-//#include "kpposterpage.moc"

@@ -17,8 +17,7 @@ include(KDE4Defaults)
 include(MacroLibrary)
 include(MacroOptionalAddSubdirectory)
 
-macro_optional_find_package(LibSpectre)
-macro_log_feature(LIBSPECTRE_FOUND "libspectre" "A PostScript rendering library" "http://libspectre.freedesktop.org/wiki/" FALSE "${LIBSPECTRE_MINIMUM_VERSION}" "Support for PS files in okular.")
+find_package(LibSpectre REQUIRED)
 
 include_directories(
   ${CMAKE_CURRENT_SOURCE_DIR}
