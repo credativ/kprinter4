@@ -33,6 +33,8 @@ set(kprinter4_SRCS
   fileprinter.cpp
   postscriptdocument.cpp
   utils/papersizeutils.cpp
+  utils/tmpdir.cpp
+  utils/pid.cpp
   widgets/printscalingoptionswidget.cpp
   widgets/posterwidget.cpp
   widgets/posterpreview.cpp
@@ -47,6 +49,7 @@ target_link_libraries(kprinter4
   ${KDE4_KDEUI_LIBS}
   ${KDE4_KDECORE_LIBS}
   ${KDE4_KUTILS_LIBS}
+  ${KDE4_KIO_LIBRARY}
   ${KDE4_KPRINTUTILS_LIBS}
   ${QT_QTNETWORK_LIBRARY}
   ${QT_QTGUI_LIBRARY}

@@ -101,6 +101,8 @@ int showPrintDialogAndPrint(const QString &filename,
 
       QMutex mutex;
 
+      doc.renderPagesGS(180, 180);
+
       QRect viewport = painter.viewport();
       for (int i = firstPage; i < lastPage; ++i) {
 
@@ -108,7 +110,7 @@ int showPrintDialogAndPrint(const QString &filename,
 
         mutex.lock();
 
-        QImage *pageImage = doc.renderPageGS(i, printer.physicalDpiX(), printer.physicalDpiY());
+        QImage *pageImage = doc.fetchRenderedPageGS(i);
 
         if (pageImage) {
 
@@ -134,6 +136,8 @@ int showPrintDialogAndPrint(const QString &filename,
         mutex.unlock();
 
       }
+
+      doc.clearRenderedPagesGS();
 
       painter.end();
 

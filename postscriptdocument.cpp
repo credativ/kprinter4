@@ -272,24 +272,17 @@ QImage* PostScriptDocument::renderPage(const int pageNum, const int dpiX, const 
 
 }
 
-QImage* PostScriptDocument::renderPageGS(const int pageNum, const int dpiX, const int dpiY) {
+void PostScriptDocument::renderPagesGS(const int dpiX, const int dpiY) {
 
   Q_UNUSED(dpiX);
   Q_UNUSED(dpiY);
 
-  if ((pageNum < 0) || (pageNum >= p_pages.count())) return NULL;
+  if (p_tmp_dir) return;
 
-  PostScriptDocumentPage page = p_pages[pageNum];
-  QString paperSize = PaperSizeUtils::paperSizeToString(PaperSizeUtils::sizeToPaperSize(page.size()));
+  p_tmp_dir = new TmpDir("kprinter4");
 
-  KTemporaryFile tf;
-  tf.setSuffix(".png");
-  tf.setAutoRemove(FALSE);
-
-  if (!tf.open()) {
-    kDebug() << "Rendering page" << pageNum+1 << "failed: Creation of temporary file" << tf.fileName() << "failed.";
-    return NULL;
-  }
+  p_tmp_path = p_tmp_dir->tmpPath();
+  if (p_tmp_dir->error()) return;
 
   QStringList args;
 
@@ -299,31 +292,36 @@ QImage* PostScriptDocument::renderPageGS(const int pageNum, const int dpiX, cons
   args << "-dQUIET";
   args << "-dBATCH";
   args << "-dNOPROMPT";
-  //args << QString("-r=%1x%2").arg(dpiX).arg(dpiY);
-  args << QString("-r180");
-  args << QString("-sPAPERSIZE=%1").arg(paperSize.toLower());
-  args << QString("-dFirstPage=%1").arg(pageNum+1);
-  args << QString("-dLastPage=%1").arg(pageNum+1);
+  //args << QString("-r%1x%2").arg(dpiX).arg(dpiY);
+  args << QString("-sPAPERSIZE=%1").arg(PaperSizeUtils::paperSizeToString(PaperSizeUtils::sizeToPaperSize(p_page_size)).toLower());
   args << "-sDEVICE=png16m";
   args << "-dTextAlphaBits=4";
   args << "-dGraphicsAlphaBits=4";
-  args << QString("-sOutputFile=%1").arg(tf.fileName());
+  args << QString("-sOutputFile=%1").arg(p_tmp_path+"%d.png");
 
   args << p_filename;
 
   kDebug() << "Executing" << "gs" << "with arguments" << args;
 
   if (KProcess::execute("gs", args) != 0) {
-    kDebug() << "Rendering page" << pageNum+1 << "failed: Execution of GhostScript (gs) failed.";
-    return NULL;
+    kDebug() << "Rendering pages failed: Execution of GhostScript (gs) failed.";
+    return;
   }
+
+}
+
+QImage* PostScriptDocument::fetchRenderedPageGS(const int pageNum) {
+
+  if ((pageNum < 0) || (pageNum >= p_pages.count())) return NULL;
+
+  PostScriptDocumentPage page = p_pages[pageNum];
 
   int width = page.size().width();
   int height = page.size().height();
 
-  kDebug() << "Size of page" << pageNum+1 << "to render: " << width << "x" << height;
+  kDebug() << "Fetching page from file" << p_tmp_path+QString("%1.png").arg(pageNum+1);
 
-  QImage image(tf.fileName());
+  QImage image(p_tmp_path+QString("%1.png").arg(pageNum+1));
 
   QImage *result = new QImage(image.copy());
 
@@ -337,6 +335,13 @@ QImage* PostScriptDocument::renderPageGS(const int pageNum, const int dpiX, cons
   }
 
   return result;
+
+}
+
+void PostScriptDocument::clearRenderedPagesGS() {
+
+  delete p_tmp_dir;
+  p_tmp_path.clear();
 
 }
 

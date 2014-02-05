@@ -38,7 +38,8 @@
 
 #include <libspectre/spectre.h>
 
-#include <utils/papersizeutils.h>
+#include "utils/papersizeutils.h"
+#include "utils/tmpdir.h"
 
 #define DEFAULT_PAPER_SIZE QPrinter::A4
 #define DEFAULT_ORIENTATION QPrinter::Portrait
@@ -87,7 +88,9 @@ public:
   QImage* renderPage(const int pageNum, const int dpiX, const int dpiY);
 
   /* Alternative implementation with GhostScript */
-  QImage* renderPageGS(const int pageNum, const int dpiX, const int dpiY);
+  void renderPagesGS(const int dpiX, const int dpiY);
+  QImage* fetchRenderedPageGS(const int pageNum);
+  void clearRenderedPagesGS();
 
   inline int numPages() { return p_pages.count(); }
   inline QSize pageSize() { return p_page_size; }
@@ -111,6 +114,9 @@ private:
 
   QSize p_page_size;
   QPrinter::Orientation p_orientation;
+
+  TmpDir *p_tmp_dir;
+  QString p_tmp_path;
 
 };
 
