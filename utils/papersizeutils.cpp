@@ -59,42 +59,45 @@ QList<QPrinter::PaperSize> PaperSizeUtils::allPaperSizes() {
 
 }
 
-QPrinter::PaperSize PaperSizeUtils::sizeToPaperSize(const QSize size) {
+QPrinter::PaperSize PaperSizeUtils::sizeToPaperSize(const QSize size, const bool transpose) {
 
   QPrinter::PaperSize result;
 
-       if ((size.width() == 2384)  && (size.height() == 3370))  result = QPrinter::A0;
-  else if ((size.width() == 1684)  && (size.height() == 2384))  result = QPrinter::A1;
-  else if ((size.width() == 1191)  && (size.height() == 1684))  result = QPrinter::A2;
-  else if ((size.width() == 842)   && (size.height() == 1191))  result = QPrinter::A3;
-  else if ((size.width() == 595)   && (size.height() == 842))   result = QPrinter::A4;
-  else if ((size.width() == 596)   && (size.height() == 843))   result = QPrinter::A4;
-  else if ((size.width() == 420)   && (size.height() == 595))   result = QPrinter::A5;
-  else if ((size.width() == 298)   && (size.height() == 420))   result = QPrinter::A6;
-  else if ((size.width() == 210)   && (size.height() == 298))   result = QPrinter::A7;
-  else if ((size.width() == 147)   && (size.height() == 210))   result = QPrinter::A8;
-  else if ((size.width() == 105)   && (size.height() == 147))   result = QPrinter::A9;
-  else if ((size.width() == 283)   && (size.height() == 4008))  result = QPrinter::B0;
-  else if ((size.width() == 2004)  && (size.height() == 2835))  result = QPrinter::B1;
-  else if ((size.width() == 1417)  && (size.height() == 2004))  result = QPrinter::B2;
-  else if ((size.width() == 1001)  && (size.height() == 1417))  result = QPrinter::B3;
-  else if ((size.width() == 709)   && (size.height() == 1001))  result = QPrinter::B4;
-  else if ((size.width() == 499)   && (size.height() == 709))   result = QPrinter::B5;
-  else if ((size.width() == 354)   && (size.height() == 499))   result = QPrinter::B6;
-  else if ((size.width() == 249)   && (size.height() == 254))   result = QPrinter::B7;
-  else if ((size.width() == 176)   && (size.height() == 249))   result = QPrinter::B8;
-  else if ((size.width() == 125)   && (size.height() == 176))   result = QPrinter::B9;
-  else if ((size.width() == 88)    && (size.height() == 125))   result = QPrinter::B10;
-  else if ((size.width() == 459)   && (size.height() == 649))   result = QPrinter::C5E;
-  else if ((size.width() == 297)   && (size.height() == 684))   result = QPrinter::Comm10E;
-  else if ((size.width() == 312)   && (size.height() == 624))   result = QPrinter::DLE;
-  else if ((size.width() == 522)   && (size.height() == 756))   result = QPrinter::Executive;
-  else if ((size.width() == 595)   && (size.height() == 935))   result = QPrinter::Folio;
-  else if ((size.width() == 1224)  && (size.height() == 792))   result = QPrinter::Ledger;
-  else if ((size.width() == 612)   && (size.height() == 1008))  result = QPrinter::Legal;
-  else if ((size.width() == 612)   && (size.height() == 792))   result = QPrinter::Letter;
-  else if ((size.width() == 792)   && (size.height() == 1224))  result = QPrinter::Tabloid;
-  else result = QPrinter::Custom;
+  QSize tmp = size;
+  if (transpose) tmp.transpose();
+
+       if ((tmp.width() == 2384)  && (tmp.height() == 3370))  result = QPrinter::A0;
+  else if ((tmp.width() == 1684)  && (tmp.height() == 2384))  result = QPrinter::A1;
+  else if ((tmp.width() == 1191)  && (tmp.height() == 1684))  result = QPrinter::A2;
+  else if ((tmp.width() == 842)   && (tmp.height() == 1191))  result = QPrinter::A3;
+  else if ((tmp.width() == 595)   && (tmp.height() == 842))   result = QPrinter::A4;
+  else if ((tmp.width() == 596)   && (tmp.height() == 843))   result = QPrinter::A4;
+  else if ((tmp.width() == 420)   && (tmp.height() == 595))   result = QPrinter::A5;
+  else if ((tmp.width() == 298)   && (tmp.height() == 420))   result = QPrinter::A6;
+  else if ((tmp.width() == 210)   && (tmp.height() == 298))   result = QPrinter::A7;
+  else if ((tmp.width() == 147)   && (tmp.height() == 210))   result = QPrinter::A8;
+  else if ((tmp.width() == 105)   && (tmp.height() == 147))   result = QPrinter::A9;
+  else if ((tmp.width() == 283)   && (tmp.height() == 4008))  result = QPrinter::B0;
+  else if ((tmp.width() == 2004)  && (tmp.height() == 2835))  result = QPrinter::B1;
+  else if ((tmp.width() == 1417)  && (tmp.height() == 2004))  result = QPrinter::B2;
+  else if ((tmp.width() == 1001)  && (tmp.height() == 1417))  result = QPrinter::B3;
+  else if ((tmp.width() == 709)   && (tmp.height() == 1001))  result = QPrinter::B4;
+  else if ((tmp.width() == 499)   && (tmp.height() == 709))   result = QPrinter::B5;
+  else if ((tmp.width() == 354)   && (tmp.height() == 499))   result = QPrinter::B6;
+  else if ((tmp.width() == 249)   && (tmp.height() == 254))   result = QPrinter::B7;
+  else if ((tmp.width() == 176)   && (tmp.height() == 249))   result = QPrinter::B8;
+  else if ((tmp.width() == 125)   && (tmp.height() == 176))   result = QPrinter::B9;
+  else if ((tmp.width() == 88)    && (tmp.height() == 125))   result = QPrinter::B10;
+  else if ((tmp.width() == 459)   && (tmp.height() == 649))   result = QPrinter::C5E;
+  else if ((tmp.width() == 297)   && (tmp.height() == 684))   result = QPrinter::Comm10E;
+  else if ((tmp.width() == 312)   && (tmp.height() == 624))   result = QPrinter::DLE;
+  else if ((tmp.width() == 522)   && (tmp.height() == 756))   result = QPrinter::Executive;
+  else if ((tmp.width() == 595)   && (tmp.height() == 935))   result = QPrinter::Folio;
+  else if ((tmp.width() == 1224)  && (tmp.height() == 792))   result = QPrinter::Ledger;
+  else if ((tmp.width() == 612)   && (tmp.height() == 1008))  result = QPrinter::Legal;
+  else if ((tmp.width() == 612)   && (tmp.height() == 792))   result = QPrinter::Letter;
+  else if ((tmp.width() == 792)   && (tmp.height() == 1224))  result = QPrinter::Tabloid;
+  else if (!transpose) result = sizeToPaperSize(tmp, TRUE); else result = QPrinter::Custom;
 
   return result;
 

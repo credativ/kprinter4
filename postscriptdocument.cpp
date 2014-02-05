@@ -109,7 +109,7 @@ bool PostScriptDocument::load(const QString& fileName) {
   spectre_document_get_page_size(p_internal_document, &width, &height);
   if ((width > 0) && (height > 0)) {
     p_page_size = QSize(width, height);
-    kDebug() << "Page Size: " << width << "x" << height << " (" << PaperSizeUtils::sizeToPaperSize(p_page_size) << ")";
+    kDebug() << "Page Size: " << width << "x" << height << " (" << PaperSizeUtils::paperSizeToString(PaperSizeUtils::sizeToPaperSize(p_page_size)) << ")";
   } else {
     kWarning() << "Unable to calculate page size.";
   }
@@ -118,6 +118,7 @@ bool PostScriptDocument::load(const QString& fileName) {
   bool reversePage;
   p_orientation = spectreOrientationToOrientation(orientation, &reversePage);
   kDebug() << "Page Orientation: " << PaperSizeUtils::orientationToString(p_orientation);
+  kDebug() << "Note: The page orientation may differ from orientation for each page.";
 
   /* Load the pages now */
   SpectrePage *page;
@@ -137,9 +138,9 @@ bool PostScriptDocument::load(const QString& fileName) {
     spectre_page_free(page);
 
     pageOrientation2 = spectreOrientationToOrientation(pageOrientation, &reversePage);
-    if (pageOrientation2 == QPrinter::Landscape) qSwap(width, height);
 
     p_pages.append(PostScriptDocumentPage(QSize(width, height), pageOrientation2, reversePage));
+    kDebug() << "Append page" << i+1 << "with Size (" << width << "," << height << ")," << PaperSizeUtils::orientationToString(pageOrientation2);
 
   }
   kDebug() << "Loaded" << p_pages.count() << "pages";
@@ -193,7 +194,7 @@ QImage* PostScriptDocument::renderPage(const int pageNum, const int dpiX, const 
   SpectreRenderContext *renderContext = spectre_render_context_new();
 
   /*spectre_render_context_set_scale(renderContext, magnify, magnify);*/
-  spectre_render_context_set_use_platform_fonts(renderContext, TRUE);
+  spectre_render_context_set_use_platform_fonts(renderContext, false);
   spectre_render_context_set_antialias_bits(renderContext, 4, 4);
   /* Do not use spectre_render_context_set_rotation makes some files not render correctly, e.g. bug210499.ps
    * so we basically do the rendering without any rotation and then rotate to the orientation as needed
@@ -205,24 +206,29 @@ QImage* PostScriptDocument::renderPage(const int pageNum, const int dpiX, const 
 
   spectre_page_render(spage, renderContext, &data, &row_length);
 
-  int pixelWidth = page.size().width();
-  int pixelHeight = page.size().height();
+  if (spectre_page_status(spage) != SPECTRE_STATUS_SUCCESS) {
+    kDebug() << "Failed to render page" << pageNum+1 << ". Spectre fail status:" << spectre_page_status(spage);
+    return NULL;
+  }
 
-  kDebug() << "Pixel size of page" << pageNum+1 << ": " << pixelWidth << "x" << pixelHeight;
+  int width = page.size().width();
+  int height = page.size().height();
+
+  kDebug() << "Size of page" << pageNum+1 << "to render: " << width << "x" << height;
 
   // Qt4 needs the missing alpha of QImage::Format_RGB32 to be 0xff
   if (data && data[3] != 0xff)
-    for (int i = 3; i < row_length * pixelHeight; i += 4)
+    for (int i = 3; i < row_length * height; i += 4)
       data[i] = 0xff;
 
   QImage image;
 
-  if (row_length == pixelWidth * 4) {
-    image = QImage(data, pixelWidth, pixelHeight, QImage::Format_RGB32);
+  if (row_length == width * 4) {
+    image = QImage(data, width, height, QImage::Format_RGB32);
   } else {
     // In case this ends up beign very slow we can try with some memmove
-    QImage aux(data, row_length / 4, pixelHeight, QImage::Format_RGB32);
-    image = QImage(aux.copy(0, 0, pixelWidth, pixelHeight));
+    QImage aux(data, row_length / 4, height, QImage::Format_RGB32);
+    image = QImage(aux.copy(0, 0, width, height));
   }
 
   /*if (page.reversePage()) {
@@ -249,11 +255,11 @@ QImage* PostScriptDocument::renderPage(const int pageNum, const int dpiX, const 
 
   QImage *result = new QImage(image.copy());
 
-  if ((result->width() != pixelWidth) || (result->height() != pixelHeight)) {
+  if ((result->width() != width) || (result->height() != height)) {
     kWarning().nospace() << "Generated image does not match wanted size: "
                     << "[" << result->width() << "x" << result->height() << "] vs requested "
-                    << "[" << pixelWidth << "x" << pixelHeight << "]";
-    QImage aux = result->scaled(pixelWidth, pixelHeight);
+                    << "[" << width << "x" << height << "]";
+    QImage aux = result->scaled(width, height);
     delete result;
     result = new QImage(aux);
   }
@@ -261,6 +267,74 @@ QImage* PostScriptDocument::renderPage(const int pageNum, const int dpiX, const 
   spectre_page_free(spage);
 
   spectre_render_context_free(renderContext);
+
+  return result;
+
+}
+
+QImage* PostScriptDocument::renderPageGS(const int pageNum, const int dpiX, const int dpiY) {
+
+  Q_UNUSED(dpiX);
+  Q_UNUSED(dpiY);
+
+  if ((pageNum < 0) || (pageNum >= p_pages.count())) return NULL;
+
+  PostScriptDocumentPage page = p_pages[pageNum];
+  QString paperSize = PaperSizeUtils::paperSizeToString(PaperSizeUtils::sizeToPaperSize(page.size()));
+
+  KTemporaryFile tf;
+  tf.setSuffix(".png");
+  tf.setAutoRemove(FALSE);
+
+  if (!tf.open()) {
+    kDebug() << "Rendering page" << pageNum+1 << "failed: Creation of temporary file" << tf.fileName() << "failed.";
+    return NULL;
+  }
+
+  QStringList args;
+
+  args << "-q";
+  args << "-dNOPAUSE";
+  args << "-dSAFER";
+  args << "-dQUIET";
+  args << "-dBATCH";
+  args << "-dNOPROMPT";
+  //args << QString("-r=%1x%2").arg(dpiX).arg(dpiY);
+  args << QString("-r180");
+  args << QString("-sPAPERSIZE=%1").arg(paperSize.toLower());
+  args << QString("-dFirstPage=%1").arg(pageNum+1);
+  args << QString("-dLastPage=%1").arg(pageNum+1);
+  args << "-sDEVICE=png16m";
+  args << "-dTextAlphaBits=4";
+  args << "-dGraphicsAlphaBits=4";
+  args << QString("-sOutputFile=%1").arg(tf.fileName());
+
+  args << p_filename;
+
+  kDebug() << "Executing" << "gs" << "with arguments" << args;
+
+  if (KProcess::execute("gs", args) != 0) {
+    kDebug() << "Rendering page" << pageNum+1 << "failed: Execution of GhostScript (gs) failed.";
+    return NULL;
+  }
+
+  int width = page.size().width();
+  int height = page.size().height();
+
+  kDebug() << "Size of page" << pageNum+1 << "to render: " << width << "x" << height;
+
+  QImage image(tf.fileName());
+
+  QImage *result = new QImage(image.copy());
+
+  if ((result->width() != width) || (result->height() != height)) {
+    kWarning().nospace() << "Generated image does not match wanted size: "
+                    << "[" << result->width() << "x" << result->height() << "] vs requested "
+                    << "[" << width << "x" << height << "]";
+    QImage aux = result->scaled(width, height, Qt::IgnoreAspectRatio, Qt::SmoothTransformation);
+    delete result;
+    result = new QImage(aux);
+  }
 
   return result;
 

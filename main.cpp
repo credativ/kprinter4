@@ -108,7 +108,7 @@ int showPrintDialogAndPrint(const QString &filename,
 
         mutex.lock();
 
-        QImage *pageImage = doc.renderPage(i, printer.physicalDpiX(), printer.physicalDpiY());
+        QImage *pageImage = doc.renderPageGS(i, printer.physicalDpiX(), printer.physicalDpiY());
 
         if (pageImage) {
 

@@ -33,6 +33,8 @@
 
 #include <KDebug>
 #include <KLocale>
+#include <KProcess>
+#include <KTemporaryFile>
 
 #include <libspectre/spectre.h>
 
@@ -83,6 +85,9 @@ public:
 
   /* Requested size depends on physical parameters of the hardware */
   QImage* renderPage(const int pageNum, const int dpiX, const int dpiY);
+
+  /* Alternative implementation with GhostScript */
+  QImage* renderPageGS(const int pageNum, const int dpiX, const int dpiY);
 
   inline int numPages() { return p_pages.count(); }
   inline QSize pageSize() { return p_page_size; }
