@@ -202,7 +202,6 @@ int showPrintDialogAndPrint(const QString &filename,
           argList << QString("-P%1").arg(select);
         }
 
-        tf.setAutoRemove(FALSE);
         tf.setSuffix(".ps");
         if (!tf.open()) {
           kDebug() << "Poster print failed. Creation of temporary file" << tf.fileName() << "failed.";
@@ -223,6 +222,7 @@ int showPrintDialogAndPrint(const QString &filename,
 
         pageRange.clear();
         printer.setPrintRange(QPrinter::AllPages);
+        printer.setFromTo(0, 0);
 
       }
 
