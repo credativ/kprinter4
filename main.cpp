@@ -69,11 +69,6 @@ int showPrintDialogAndPrint(const QString &filename,
   if (!printtitle.isEmpty()) printer.setDocName(printtitle);
   printer.setCopyCount(numCopies);
 
-
-  QString pageRange;
-  if ((printer.fromPage() > 0) && (printer.toPage() > 0))
-    pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
-
   printScalingOptionsWidget scaleWidget;
   PosterWidget posterWidget;
 
@@ -86,6 +81,13 @@ int showPrintDialogAndPrint(const QString &filename,
 
   int ret = 0;
   if ((nodialog) || printDialog->exec()) {
+
+    QString pageRange;
+    int pagesSelected = -1;
+    if ((printer.fromPage() > 0) && (printer.toPage() > 0)) {
+      pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
+      pagesSelected = (printer.toPage() - printer.fromPage()) + 1;
+    }
 
     if (scaleWidget.scaleMode() != printScalingOptionsWidget::NoScale) {
 
@@ -148,6 +150,32 @@ int showPrintDialogAndPrint(const QString &filename,
       KTemporaryFile tf;
       if (posterWidget.isEnabled()) {
 
+        if ((pagesSelected > 1) || (pageRange.isEmpty() && (doc.numPages() > 1))) {
+          kWarning() << "Poster is not able to process multi page postscript documents.";
+        }
+
+        QStringList argList;
+
+        KTemporaryFile tf2;
+        tf2.setSuffix(".ps");
+        if (!tf2.open()) {
+          kDebug() << "Poster print failed. Creation of temporary file" << tf2.fileName() << "failed.";
+          return 5;
+        }
+
+        QString filenameToPoster = filename;
+        if (!pageRange.isEmpty()) {
+          QString exe = "psselect";
+          argList << QString("-p%1").arg(pageRange);
+          argList << filename << tf2.fileName();
+          kDebug() << "Executing" << exe << "with arguments" << argList;
+          if (KProcess::execute(exe, argList) != 0) {
+            kDebug() << "Poster print failed: Execution of" << exe << "failed.";
+            return 5;
+          }
+          filenameToPoster = tf2.fileName();
+        }
+
         // Poster print
 
         QMap<QString, QString> settings;
@@ -159,19 +187,19 @@ int showPrintDialogAndPrint(const QString &filename,
         QString select = settings["_kde-poster-select"];
         QString printSize = settings["kde-printsize"];
 
-        QStringList args;
+        argList.clear();
 
         if (!printSize.isEmpty()) {
-          args << QString("-m") << printSize;
+          argList << QString("-m%1").arg(printSize);
         }
         if (!size.isEmpty()) {
-          args << QString("-p") << size;
+          argList << QString("-p%1").arg(size);
         }
         if (!cut.isEmpty()) {
-          args << QString("-c") << QString("%1%").arg(cut);
+          argList << QString("-c%1%").arg(cut);
         }
         if (!select.isEmpty()) {
-          args << QString("-P") << select;
+          argList << QString("-P%1").arg(select);
         }
 
         tf.setAutoRemove(FALSE);
@@ -181,16 +209,20 @@ int showPrintDialogAndPrint(const QString &filename,
           return 5;
         }
 
-        args << filename << QString("-o") << tf.fileName();
+        argList << filenameToPoster << QString("-o%1").arg(tf.fileName());
 
-        kDebug() << "Executing" << "/usr/bin/poster" << "with arguments" << args;
+        QString exe = "poster";
+        kDebug() << "Executing" << exe << "with arguments" << argList;
 
-        if (KProcess::execute("/usr/bin/poster", args) != 0) {
-          kDebug() << "Poster print failed: Execution of poster failed.";
+        if (KProcess::execute(exe, argList) != 0) {
+          kDebug() << "Poster print failed: Execution of" << exe << "failed.";
           return 5;
         }
 
         filenameToPrint = tf.fileName();
+
+        pageRange.clear();
+        printer.setPrintRange(QPrinter::AllPages);
 
       }
 

@@ -70,6 +70,9 @@ void PostScriptDocumentPage::clear() {
 
 PostScriptDocument::PostScriptDocument() {
 
+  p_tmp_dir = NULL;
+  p_tmp_path.clear();
+
 }
 
 PostScriptDocument::PostScriptDocument(const QString& fileName) {
@@ -340,8 +343,8 @@ QImage* PostScriptDocument::fetchRenderedPageGS(const int pageNum) {
 
 void PostScriptDocument::clearRenderedPagesGS() {
 
-  delete p_tmp_dir;
   p_tmp_path.clear();
+  if (p_tmp_dir) delete p_tmp_dir;
 
 }
 

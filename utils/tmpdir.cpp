@@ -53,6 +53,12 @@ TmpDir::~TmpDir() {
   }
 
   QDir dir(p_tmp_path_app);
+  dir.setNameFilters(QStringList() << "*.*");
+  dir.setFilter(QDir::Files);
+  foreach(QString dirFile, dir.entryList()) {
+    dir.remove(dirFile);
+  }
+
   if ((dir.exists()) && (!dir.rmdir(p_tmp_path_app))) {
     kDebug() << QString("Temporary folder \"%1\" not removed yet.").arg(p_tmp_path_app);
   }
