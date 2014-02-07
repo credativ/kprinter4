@@ -204,7 +204,7 @@ PosterWidget::PosterWidget( QWidget *parent )
         m_postersize->addItem( PaperSizeUtils::paperSizeToString(paperSize), paperSize );
         m_printsize->addItem( PaperSizeUtils::paperSizeToString(paperSize), paperSize );
     }
-    m_postersize->setCurrentIndex( m_postersize->findData(QPrinter::A3) );
+    m_postersize->setCurrentIndex( m_postersize->findData(QPrinter::A4) );
     slotPosterSizeChanged( m_postersize->currentIndex() );
 
     connect( m_postercheck, SIGNAL( toggled( bool ) ), dummy, SLOT( setEnabled( bool ) ) );
@@ -259,6 +259,7 @@ PosterWidget::PosterWidget( QWidget *parent )
 	l1->setRowStretch( 4, 1 );
     l1->addItem(new QSpacerItem(0, 10), 3, 0);
     l1->addItem(new QSpacerItem(0, 10), 5, 0);
+
 }
 
 PosterWidget::~PosterWidget()
