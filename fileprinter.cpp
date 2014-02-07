@@ -61,7 +61,9 @@ int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDelet
       if (!pageRange.isEmpty() && psselectAvailable()) {
 
         exe = "psselect";
-        argList << QString("-p%1").arg(pageRange) << fileList[0] << printer.outputFileName();
+        argList << QString("-p%1").arg(pageRange);
+        argList << fileList[0];
+        argList << printer.outputFileName();
         kDebug() << "Executing" << exe << "with arguments" << argList;
         ret = KProcess::execute(exe, argList);
 
@@ -92,7 +94,9 @@ int FilePrinter::doPrintFiles(QPrinter& printer, QStringList fileList, FileDelet
         tf.setSuffix(".ps");
         if (!tf.open()) return -10;
         exe = "psselect";
-        argList << QString("-p%1").arg(pageRange) << inputfilename << tf.fileName();
+        argList << QString("-p%1").arg(pageRange);
+        argList << inputfilename;
+        argList << tf.fileName();
         kDebug() << "Executing" << exe << "with arguments" << argList;
         ret = KProcess::execute(exe, argList);
         if (ret) return ret;
