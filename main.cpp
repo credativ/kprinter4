@@ -72,6 +72,8 @@ int showPrintDialogAndPrint(const QString &filename,
   printScalingOptionsWidget scaleWidget;
   PosterWidget posterWidget;
 
+  posterWidget.setMediaSizeDescription(PaperSizeUtils::paperSizeToString(paperSize));
+
   QObject::connect(&scaleWidget, SIGNAL(scalingEnabled(bool)), &posterWidget, SLOT(setDisabled(bool)));
   QObject::connect(&posterWidget, SIGNAL(posterEnabled(bool)), &scaleWidget, SLOT(setDisabled(bool)));
 
