@@ -207,16 +207,17 @@ PosterWidget::PosterWidget( QWidget *parent )
     m_postersize->setCurrentIndex( m_postersize->findData(QPrinter::A3) );
     slotPosterSizeChanged( m_postersize->currentIndex() );
 
-	connect( m_postercheck, SIGNAL( toggled( bool ) ), dummy, SLOT( setEnabled( bool ) ) );
-	dummy->setEnabled( false );
-	connect( m_postersize, SIGNAL( activated( int ) ), SLOT( slotPosterSizeChanged( int ) ) );
+    connect( m_postercheck, SIGNAL( toggled( bool ) ), dummy, SLOT( setEnabled( bool ) ) );
+    dummy->setEnabled( false );
+    connect( m_postercheck, SIGNAL( toggled(bool) ), SIGNAL( posterEnabled(bool) ) );
+    connect( m_postersize, SIGNAL( activated( int ) ), SLOT( slotPosterSizeChanged( int ) ) );
     connect( m_printsize, SIGNAL( activated(int)), SLOT(slotPrintSizeChanged(int)));
-	connect( m_cutmargin, SIGNAL( valueChanged( int ) ), SLOT( slotMarginChanged( int ) ) );
-	connect( m_lockbtn, SIGNAL( toggled( bool ) ), m_printsize, SLOT( setDisabled( bool ) ) );
-	m_printsize->setEnabled( false );
-	connect( m_lockbtn, SIGNAL( toggled( bool ) ), SLOT( slotLockToggled( bool ) ) );
+    connect( m_cutmargin, SIGNAL( valueChanged( int ) ), SLOT( slotMarginChanged( int ) ) );
+    connect( m_lockbtn, SIGNAL( toggled( bool ) ), m_printsize, SLOT( setDisabled( bool ) ) );
+    m_printsize->setEnabled( false );
+    connect( m_lockbtn, SIGNAL( toggled( bool ) ), SLOT( slotLockToggled( bool ) ) );
     connect( m_selection, SIGNAL( textEdited( const QString& ) ), m_preview, SLOT( setSelectedPages( const QString& ) ) );
-	connect( m_preview, SIGNAL( selectionChanged( const QString& ) ), m_selection, SLOT( setText( const QString& ) ) );
+    connect( m_preview, SIGNAL( selectionChanged( const QString& ) ), m_selection, SLOT( setText( const QString& ) ) );
 
     // TODO ???
     /*if ( KMFactory::self()->settings()->application != KPrinter::Dialog

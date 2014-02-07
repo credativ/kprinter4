@@ -31,6 +31,8 @@ printScalingOptionsWidget::printScalingOptionsWidget(QWidget *parent) : printSca
   mScaleGroup.addButton(mScaleToPage, ScaleToPage);
   mScaleGroup.addButton(mScaleTo, ScaleToCustomSize);
 
+  connect(mNoScale, SIGNAL(toggled(bool)), SLOT(emitScalingEnabled(bool)));
+
 }
 
 printScalingOptionsWidget::~printScalingOptionsWidget() {
@@ -154,4 +156,8 @@ QPoint printScalingOptionsWidget::adjustPainterPosition(const QSize& imageSize, 
     }
 
     return QPoint(posX, posY);
+}
+
+void printScalingOptionsWidget::emitScalingEnabled(bool noScale) {
+  emit scalingEnabled(!noScale);
 }

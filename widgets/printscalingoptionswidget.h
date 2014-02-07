@@ -64,6 +64,12 @@ public:
   QSize adjustPainterSize(const QImage& img, const QSize& viewportSize, const QSizeF& pageSize, const QSizeF& paperSize);
   QPoint adjustPainterPosition(const QSize& imageSize, const QSize& viewportSize);
 
+signals:
+  void scalingEnabled(bool enabled);
+
+private slots:
+  void emitScalingEnabled(bool noScale);
+
 private:
   QButtonGroup mScaleGroup;
   QButtonGroup mPositionGroup;

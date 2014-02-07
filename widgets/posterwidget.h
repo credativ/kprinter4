@@ -53,6 +53,9 @@ public:
     QString mediaSizeDescription() const;
     void setMediaSizeDescription(const QString& mediaSize);
 
+signals:
+    void posterEnabled(bool enabled);
+
 protected slots:
 	void slotPosterSizeChanged( int );
     void slotPrintSizeChanged( int );

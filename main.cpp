@@ -72,6 +72,9 @@ int showPrintDialogAndPrint(const QString &filename,
   printScalingOptionsWidget scaleWidget;
   PosterWidget posterWidget;
 
+  QObject::connect(&scaleWidget, SIGNAL(scalingEnabled(bool)), &posterWidget, SLOT(setDisabled(bool)));
+  QObject::connect(&posterWidget, SIGNAL(posterEnabled(bool)), &scaleWidget, SLOT(setDisabled(bool)));
+
   QPrintDialog *printDialog = KdePrint::createPrintDialog(&printer, QList<QWidget*>() << &scaleWidget << &posterWidget);
   printDialog->setWindowTitle(i18n("KPrinter4"));
   if (numPages > 0) {
