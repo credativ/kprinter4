@@ -153,8 +153,10 @@ int showPrintDialogAndPrint(const QString &filename,
       KTemporaryFile tf;
       if (posterWidget.isEnabled()) {
 
-        if ((pagesSelected > 1) || (pageRange.isEmpty() && (doc.numPages() > 1))) {
-          kWarning() << "Poster is not able to process multi page postscript documents.";
+        bool keepFirstPageOnly = FALSE;
+        if (doc.numPages() > 1) {
+          kWarning() << "Poster is not able to process multi page postscript documents. Keeping first page only.";
+          keepFirstPageOnly = TRUE;
         }
 
         QStringList argList;
@@ -167,9 +169,9 @@ int showPrintDialogAndPrint(const QString &filename,
         }
 
         QString filenameToPoster = filename;
-        if (!pageRange.isEmpty()) {
+        if (keepFirstPageOnly) {
           QString exe = "psselect";
-          argList << QString("-p%1").arg(pageRange);
+          argList << "-p1";
           argList << filename << tf2.fileName();
           kDebug() << "Executing" << exe << "with arguments" << argList;
           if (KProcess::execute(exe, argList) != 0) {
