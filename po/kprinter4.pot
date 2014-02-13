@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-04 13:01+0100\n"
+"POT-Creation-Date: 2014-02-13 11:49+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,80 +17,104 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: main.cpp:80 main.cpp:163
+#: main.cpp:82 main.cpp:255
 msgid "KPrinter4"
 msgstr ""
 
-#: main.cpp:164
+#: main.cpp:256
 msgid "Simple PostScript document printer"
 msgstr ""
 
-#: main.cpp:166
+#: main.cpp:258
 msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
 msgstr ""
 
-#: main.cpp:174
+#: main.cpp:262
+msgid "Marco Nelles"
+msgstr ""
+
+#: main.cpp:262
+msgid "Current maintainer, main developer"
+msgstr ""
+
+#: main.cpp:263
+msgid "credativ GmbH"
+msgstr ""
+
+#: main.cpp:263
+msgid "credativ GmbH (Germany)"
+msgstr ""
+
+#: main.cpp:268
 msgid "Make an internal copy of the files to print"
 msgstr ""
 
-#: main.cpp:175
+#: main.cpp:269
 msgid "Printer/destination to print on"
 msgstr ""
 
-#: main.cpp:176
+#: main.cpp:270
 msgid "Title/Name for the print job"
 msgstr ""
 
-#: main.cpp:177
+#: main.cpp:271
 msgid "Number of copies"
 msgstr ""
 
-#: main.cpp:178
+#: main.cpp:272
 msgid "Printer/Job option(s)"
 msgstr ""
 
-#: main.cpp:179
+#: main.cpp:273
 msgid "Job output mode (gui, console, none)"
 msgstr ""
 
-#: main.cpp:180
+#: main.cpp:274
 msgid "Print system to use (autodetect, lpd, cups)"
 msgstr ""
 
-#: main.cpp:181
+#: main.cpp:275
 msgid "Allow printing from STDIN"
 msgstr ""
 
-#: main.cpp:182
+#: main.cpp:276
 msgid "Do not show the print dialog (print directly)"
 msgstr ""
 
-#: main.cpp:183
+#: main.cpp:277
 msgid "PostScript document(s) to print"
 msgstr ""
 
-#: main.cpp:192
+#: main.cpp:286
 msgid "Option -c not implemented yet"
 msgstr ""
 
-#: main.cpp:193
+#: main.cpp:287
 msgid "Option --stdin not implemented yet"
 msgstr ""
 
-#: main.cpp:210
+#: main.cpp:304
 msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
 msgstr ""
 
-#: main.cpp:216
+#: main.cpp:310
 msgid ""
 "Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
 msgstr ""
 
-#: utils/papersizeutils.cpp:145
+#: main.cpp:320
+msgid "Found more than one file parameter. Using only the first one."
+msgstr ""
+
+#: main.cpp:326
+msgid "Open PostScript document"
+msgstr ""
+
+#: utils/papersizeutils.cpp:148
 msgid "Portrait"
 msgstr ""
 
-#: utils/papersizeutils.cpp:146
+#: utils/papersizeutils.cpp:149
 msgid "Landscape"
 msgstr ""
 
@@ -271,7 +295,7 @@ msgstr ""
 msgid "Link/unlink poster and print size"
 msgstr ""
 
-#: widgets/posterwidget.cpp:456
+#: widgets/posterwidget.cpp:458
 msgid "Unknown"
 msgstr ""
 
