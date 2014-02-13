@@ -204,7 +204,7 @@ PosterWidget::PosterWidget( QWidget *parent )
         m_postersize->addItem( PaperSizeUtils::paperSizeToString(paperSize), paperSize );
         m_printsize->addItem( PaperSizeUtils::paperSizeToString(paperSize), paperSize );
     }
-    m_postersize->setCurrentIndex( m_postersize->findData(QPrinter::A4) );
+    m_postersize->setCurrentIndex( m_postersize->findData(QPrinter::A3) );
     slotPosterSizeChanged( m_postersize->currentIndex() );
 
     connect( m_postercheck, SIGNAL( toggled( bool ) ), dummy, SLOT( setEnabled( bool ) ) );
