@@ -27,10 +27,11 @@
 #include <KApplication>
 #include <KAboutData>
 #include <KCmdLineArgs>
-#include <kdeprintdialog.h>
-#include <kprintpreview.h>
-#include <kdebug.h>
+#include <KDEPrintDialog>
+#include <KPrintPreview>
+#include <KDebug>
 #include <KLocale>
+#include <KFileDialog>
 
 #include "config.h"
 #include "postscriptdocument.h"
@@ -88,10 +89,8 @@ int showPrintDialogAndPrint(const QString &filename,
   if ((nodialog) || printDialog->exec()) {
 
     QString pageRange;
-    int pagesSelected = -1;
     if ((printer.fromPage() > 0) && (printer.toPage() > 0)) {
       pageRange = QString("%1-%2").arg(printer.fromPage()).arg(printer.toPage());
-      pagesSelected = (printer.toPage() - printer.fromPage()) + 1;
     }
 
     if (scaleWidget.scaleMode() != printScalingOptionsWidget::NoScale) {
@@ -312,26 +311,28 @@ int main(int argc, char *argv[]) {
 
   bool nodialog = ((args->getOption("j") != "gui") || !args->isSet("nd"));
 
-  int ret = 1;
+  QString psFileName;
   if (args->count()) {
 
-    QStringList psfilenames;
-    int ok = 0;
-    for (int i = 0; i < args->count(); ++i)
-      if (showPrintDialogAndPrint(args->url(i).path(),
+    if (args->count() > 0)
+      kWarning() << i18n("Found more than one file parameter. Using only the first one.");
+
+    psFileName = args->url(0).path();
+
+  } else {
+
+    psFileName = KFileDialog::getOpenFileName(KUrl(QDir::homePath()), "*.ps", NULL, i18n("Open PostScript document"));
+
+  }
+
+  if (psFileName.isEmpty()) return 2;
+
+  return showPrintDialogAndPrint(psFileName,
         args->getOption("D"),
         args->getOption("t"),
         numCopies,
         printerOptions,
         nodialog,
-        system) == 0) {
-          ++ok;
-      }
-
-    if (ok == 0) ret = 3; else ret = 0;
-
-  }
-
-  return ret;
+        system);
 
 }
