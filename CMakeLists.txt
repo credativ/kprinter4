@@ -59,4 +59,5 @@ target_link_libraries(kprinter4
 install(TARGETS kprinter4 DESTINATION ${BIN_INSTALL_DIR})
 install(FILES kprinter4.desktop DESTINATION ${XDG_APPS_INSTALL_DIR})
 
+add_subdirectory(icons)
 add_subdirectory(po)

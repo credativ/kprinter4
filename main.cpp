@@ -259,6 +259,8 @@ int main(int argc, char *argv[]) {
                        KLocalizedString(),
                        "http://www.credativ.com/",
                        "marco.nelles@credativ.de");
+  aboutData.addAuthor(ki18n("Marco Nelles"), ki18n("Current maintainer, main developer"), "marco.nelles@credativ.de");
+  aboutData.addCredit(ki18n("credativ GmbH"), ki18n("credativ GmbH (Germany)"), 0, "http://www.credativ.com/");
 
   KCmdLineArgs::init(argc, argv, &aboutData);
 
