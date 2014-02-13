@@ -1,0 +1,19 @@
+[Desktop Entry]
+Name=KPrinter4
+Name[de]=KPrinter4
+Name[x-test]=xxKPrinter4xx
+GenericName=PostScript printing
+GenericName[de]=PostScript-Dokumente drucken
+GenericName[x-test]=xxPostScript printingxx
+Exec=kprinter4
+Icon=printer
+Type=Application
+MimeType=application/postscript;
+Categories=Qt;KDE;System;
+Terminal=false
+X-DCOP-ServiceType=Unique
+X-DCOP-ServiceName=audex
+X-DocPath=http://userbase.kde.org/Audex
+Comment=Print PostScript documents with KDE print dialog
+Comment[de]=PostScript-Dokumente mit Hilfe des KDE Druck-Dialogs drucken
+Comment[x-test]=xxPrint PostScript documents with KDE print dialogxx
