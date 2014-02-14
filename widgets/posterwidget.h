@@ -43,7 +43,6 @@ public:
     PosterWidget( QWidget *parent = 0 );
     ~PosterWidget();
 
-    //void setOptions( const QMap<QString,QString>& opts );
     void getOptions( QMap<QString,QString>& opts, bool incldef = false );
     bool isEnabled();
 
@@ -52,6 +51,8 @@ public:
 
     QString mediaSizeDescription() const;
     void setMediaSizeDescription(const QString& mediaSize);
+
+    void showMultiPageNote(const bool show);
 
 signals:
     void posterEnabled(bool enabled);
@@ -71,6 +72,7 @@ private:
 	KIntNumInput *m_cutmargin;
 	QPushButton *m_lockbtn;
 	QLineEdit *m_selection;
+        QLabel *m_multipage_note_label;
 };
 
 #endif

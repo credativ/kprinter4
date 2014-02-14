@@ -88,6 +88,8 @@ int showPrintDialogAndPrint(const QString &filename,
     printDialog->setFromTo(1, numPages);
   }
 
+  posterWidget.showMultiPageNote((numPages > 1));
+
   int ret = 0;
   if ((nodialog) || printDialog->exec()) {
 
@@ -190,7 +192,6 @@ int showPrintDialogAndPrint(const QString &filename,
         QMap<QString, QString> settings;
         posterWidget.getOptions(settings);
 
-        //QString media = settings["_kde-poster-media"];
         QString size = settings["_kde-poster-size"];
         QString cut = settings["_kde-poster-cut"];
         QString select = settings["_kde-poster-select"];

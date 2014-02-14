@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kprinter4\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-13 11:49+0100\n"
+"POT-Creation-Date: 2014-02-14 11:38+0100\n"
 "PO-Revision-Date: 2014-01-22 07:00+0100\n"
 "Last-Translator: Marco Nelles <marco.nelles@credativ.de>\n"
 "Language-Team: Marco Nelles <marco.nelles@credativ.de>\n"
@@ -239,7 +239,13 @@ msgstr "&Vergrößern auf:"
 msgid "&Tile pages (to be printed):"
 msgstr "Auf Seiten &verteilen:"
 
-#: main.cpp:275
+#: widgets/posterwidget.cpp:210
+msgid "<i><b>Note:</b> Only first page will be taken for poster print.</i>"
+msgstr ""
+"<i><b>Hinweis:</b> Zum Poster-Druck wird nur die erste Seite des Dokuments "
+"verwendet.</i>"
+
+#: main.cpp:279
 msgid "Allow printing from STDIN"
 msgstr "Erlaube STDIN-Eingaben"
 
@@ -248,15 +254,15 @@ msgstr "Erlaube STDIN-Eingaben"
 msgid "C&ut margin (% of media):"
 msgstr "&Beschnittbereich (% des Mediums):"
 
-#: main.cpp:258
+#: main.cpp:262
 msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
 msgstr ""
 
-#: main.cpp:262
+#: main.cpp:266
 msgid "Current maintainer, main developer"
 msgstr "Aktiver Entwickler"
 
-#: main.cpp:276
+#: main.cpp:280
 msgid "Do not show the print dialog (print directly)"
 msgstr "Druck-Dialog nicht anzeigen (Direkt-Druck)"
 
@@ -268,19 +274,19 @@ msgstr "Position des Dokuments"
 msgid "Enlarge smaller pages"
 msgstr "K&leine Seiten vergößern"
 
-#: main.cpp:320
+#: main.cpp:324
 msgid "Found more than one file parameter. Using only the first one."
 msgstr "Mehr als einen Datei-Parameter gefunden. Verwende nur den ersten."
 
-#: main.cpp:273
+#: main.cpp:277
 msgid "Job output mode (gui, console, none)"
 msgstr "Ausgabe-Modus (gui, console, none)"
 
-#: main.cpp:82 main.cpp:255
+#: main.cpp:85 main.cpp:259
 msgid "KPrinter4"
 msgstr ""
 
-#: utils/papersizeutils.cpp:149
+#: utils/papersizeutils.cpp:188
 msgid "Landscape"
 msgstr ""
 
@@ -289,11 +295,11 @@ msgid "Link/unlink poster and print size"
 msgstr ""
 "Poster- und Druckmedien-Größe verknüpfen bzw. ihre Verknüpfung aufheben"
 
-#: main.cpp:268
+#: main.cpp:272
 msgid "Make an internal copy of the files to print"
 msgstr "Erzeugt eine interne Kopie der Datei zum Drucken"
 
-#: main.cpp:262
+#: main.cpp:266
 msgid "Marco Nelles"
 msgstr ""
 
@@ -301,28 +307,28 @@ msgstr ""
 msgid "Media size:"
 msgstr "Format des Mediums:"
 
-#: main.cpp:271
+#: main.cpp:275
 msgid "Number of copies"
 msgstr "Anzahl der Kopien"
 
-#: main.cpp:326
+#: main.cpp:330
 #, fuzzy
 msgid "Open PostScript document"
 msgstr "Einfacher PostScript-Dokumente-Drucker"
 
-#: main.cpp:287
+#: main.cpp:291
 msgid "Option --stdin not implemented yet"
 msgstr "Option --stdin bisher nicht implementiert"
 
-#: main.cpp:286
+#: main.cpp:290
 msgid "Option -c not implemented yet"
 msgstr "Option -c bisher nicht implementiert"
 
-#: utils/papersizeutils.cpp:148
+#: utils/papersizeutils.cpp:187
 msgid "Portrait"
 msgstr ""
 
-#: main.cpp:277
+#: main.cpp:281
 msgid "PostScript document(s) to print"
 msgstr "PostScript-Dokumente zum Drucken"
 
@@ -348,15 +354,15 @@ msgstr ""
 msgid "Pri&nt size:"
 msgstr "&Bedruckbarer Bereich:"
 
-#: main.cpp:274
+#: main.cpp:278
 msgid "Print system to use (autodetect, lpd, cups)"
 msgstr "Druck-System (autodetect, lpd, cups)"
 
-#: main.cpp:272
+#: main.cpp:276
 msgid "Printer/Job option(s)"
 msgstr "Drucker/Auftrags-Option(en)"
 
-#: main.cpp:269
+#: main.cpp:273
 msgid "Printer/destination to print on"
 msgstr "Drucker/Ziel zum Drucken"
 
@@ -364,34 +370,34 @@ msgstr "Drucker/Ziel zum Drucken"
 msgid "Scaling"
 msgstr "Skalierung"
 
-#: main.cpp:256
+#: main.cpp:260
 msgid "Simple PostScript document printer"
 msgstr "Einfacher PostScript-Dokumente-Drucker"
 
-#: main.cpp:270
+#: main.cpp:274
 msgid "Title/Name for the print job"
 msgstr "Name des Druckauftrags"
 
-#: widgets/posterwidget.cpp:458
+#: widgets/posterwidget.cpp:425
 msgid "Unknown"
 msgstr "Unbekannt"
 
-#: main.cpp:310
+#: main.cpp:314
 msgid ""
 "Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
 msgstr ""
 "Unbekannter Wert \"%1\" für Option --system. Benutze Standard-Wert "
 "\"autodetect\"."
 
-#: main.cpp:304
+#: main.cpp:308
 msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
 msgstr "Unbekannter Wert \"%1\" für Option -j. Benutze Standard-Wert \"gui\"."
 
-#: main.cpp:263
+#: main.cpp:267
 msgid "credativ GmbH"
 msgstr ""
 
-#: main.cpp:263
+#: main.cpp:267
 msgid "credativ GmbH (Germany)"
 msgstr "credativ GmbH (Deutschland)"
 

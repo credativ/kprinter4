@@ -207,6 +207,9 @@ PosterWidget::PosterWidget( QWidget *parent )
     m_postersize->setCurrentIndex( m_postersize->findData(QPrinter::A3) );
     slotPosterSizeChanged( m_postersize->currentIndex() );
 
+    m_multipage_note_label = new QLabel(i18n("<i><b>Note:</b> Only first page will be taken for poster print.</i>"));
+    m_multipage_note_label->setVisible( false );
+
     connect( m_postercheck, SIGNAL( toggled( bool ) ), dummy, SLOT( setEnabled( bool ) ) );
     dummy->setEnabled( false );
     connect( m_postercheck, SIGNAL( toggled(bool) ), SIGNAL( posterEnabled(bool) ) );
@@ -259,49 +262,13 @@ PosterWidget::PosterWidget( QWidget *parent )
 	l1->setRowStretch( 4, 1 );
     l1->addItem(new QSpacerItem(0, 10), 3, 0);
     l1->addItem(new QSpacerItem(0, 10), 5, 0);
+    l1->addWidget( m_multipage_note_label, 8, 0, 1, 3 );
 
 }
 
 PosterWidget::~PosterWidget()
 {
 }
-
-/*void PosterWidget::setOptions( const QMap<QString,QString>& opts )
-{
-	QString ps = opts[ "PageSize" ];
-	if ( ps.isEmpty() && !opts[ "kde-pagesize" ].isEmpty() )
-	{
-		ps = pageSizeToPageName( ( KPrinter::PageSize )opts[ "kde-pagesize" ].toInt() );
-		if ( ps.isEmpty() )
-			ps = opts[ "_kde-poster-media" ];
-	}
-	if ( ps.isEmpty() )
-		m_mediasize->setText( i18n( "Unknown" ) );
-	else
-		m_mediasize->setText( ps );
-	m_preview->setMediaSize( ps );
-
-	if ( opts[ "_kde-filters" ].find( "poster" ) != -1 )
-	{
-		m_postercheck->setChecked( true );
-		ps = opts[ "_kde-poster-size" ];
-		QString prtsize = opts[ "kde-printsize" ];
-		if ( !ps.isEmpty() )
-		{
-			m_postersize->setCurrentItem( findIndex( pageNameToPageSize( ps ) ) );
-			m_lockbtn->setOn( !prtsize.isEmpty() &&
-					page_sizes[ m_postersize->currentItem() ].ID == prtsize.toInt() );
-			if ( !m_lockbtn->isOn() )
-				m_printsize->setCurrentItem( findIndex( prtsize.toInt() ) );
-			slotPosterSizeChanged( m_postersize->currentItem() );
-		}
-		if ( !opts[ "_kde-poster-cut" ].isEmpty() )
-			m_cutmargin->setValue( opts[ "_kde-poster-cut" ].toInt() );
-		m_selection->setText( opts[ "_kde-poster-select" ] );
-	}
-	else
-		m_postercheck->setChecked( false );
-}*/
 
 void PosterWidget::getOptions( QMap<QString,QString>& opts, bool )
 {
@@ -456,6 +423,12 @@ QString PosterWidget::mediaSizeDescription() const
 void PosterWidget::setMediaSizeDescription(const QString& mediaSize)
 {
     m_mediasize->setText(mediaSize.isEmpty() ? i18n("Unknown") : mediaSize);
+}
+
+void PosterWidget::showMultiPageNote(const bool show) {
+
+  m_multipage_note_label->setVisible(show);
+
 }
 
 void PosterWidget::slotPosterSizeChanged( int value )
