@@ -142,6 +142,45 @@ QString PaperSizeUtils::paperSizeToString(const QPrinter::PaperSize size) {
 
 }
 
+QString PaperSizeUtils::paperSizeToFancyString(const QPrinter::PaperSize size) {
+
+  switch (size) {
+      case QPrinter::A0 :         return "DIN A0";
+      case QPrinter::A1 :         return "DIN A1";
+      case QPrinter::A2 :         return "DIN A2";
+      case QPrinter::A3 :         return "DIN A3";
+      case QPrinter::A4 :         return "DIN A4";
+      case QPrinter::A5 :         return "DIN A5";
+      case QPrinter::A6 :         return "DIN A6";
+      case QPrinter::A7 :         return "DIN A7";
+      case QPrinter::A8 :         return "DIN A8";
+      case QPrinter::A9 :         return "DIN A9";
+      case QPrinter::B0 :         return "B0";
+      case QPrinter::B1 :         return "B1";
+      case QPrinter::B10 :        return "B10";
+      case QPrinter::B2 :         return "B2";
+      case QPrinter::B3 :         return "B3";
+      case QPrinter::B4 :         return "B4";
+      case QPrinter::B5 :         return "B5";
+      case QPrinter::B6 :         return "B6";
+      case QPrinter::B7 :         return "B7";
+      case QPrinter::B8 :         return "B8";
+      case QPrinter::B9 :         return "B9";
+      case QPrinter::C5E :        return "C5";
+      case QPrinter::Comm10E :    return "Commercial#10";
+      case QPrinter::DLE :        return "DL";
+      case QPrinter::Executive :  return "Executive";
+      case QPrinter::Folio :      return "Folio";
+      case QPrinter::Ledger :     return "Ledger";
+      case QPrinter::Legal :      return "Legal";
+      case QPrinter::Letter :     return "Letter";
+      case QPrinter::Tabloid :    return "Tabloid";
+      case QPrinter::Custom :     return QString("Custom");
+      default :                   return QString();
+    }
+
+}
+
 QString PaperSizeUtils::orientationToString(const QPrinter::Orientation orientation) {
 
   switch (orientation) {

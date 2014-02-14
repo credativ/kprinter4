@@ -32,6 +32,7 @@ public:
   static QList<QPrinter::PaperSize> allPaperSizes();
   static QPrinter::PaperSize sizeToPaperSize(const QSize size, const bool transpose = FALSE);
   static QString paperSizeToString(const QPrinter::PaperSize size);
+  static QString paperSizeToFancyString(const QPrinter::PaperSize size);
   static QString orientationToString(const QPrinter::Orientation orientation);
 
 };

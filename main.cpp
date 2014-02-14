@@ -37,6 +37,8 @@
 #include "postscriptdocument.h"
 #include "fileprinter.h"
 
+#include "utils/papersizeutils.h"
+
 #include "widgets/printscalingoptionswidget.h"
 #include "widgets/posterwidget.h"
 
@@ -73,7 +75,7 @@ int showPrintDialogAndPrint(const QString &filename,
   printScalingOptionsWidget scaleWidget;
   PosterWidget posterWidget;
 
-  posterWidget.setMediaSizeDescription(PaperSizeUtils::paperSizeToString(printer.paperSize()));
+  posterWidget.setMediaSizeDescription(PaperSizeUtils::paperSizeToFancyString(printer.paperSize()));
   posterWidget.setMediaSize(doc.pageSize());
 
   QObject::connect(&scaleWidget, SIGNAL(scalingEnabled(bool)), &posterWidget, SLOT(setDisabled(bool)));
