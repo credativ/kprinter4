@@ -55,13 +55,7 @@ PosterWidget::PosterWidget( QWidget *parent )
 			" which allow for oversized appearance of the stitched-together tiles.] </p>"
 			" <p><b>Note:</b> The standard version of 'poster' will not work. Your system "
 			" must use a patched version of 'poster'. Ask your operating system vendor to "
-			" provide a patched version of 'poster' if he does not already. </p>"
-			" <p><b>Additional hint for power users:</b> A patched version of 'poster' is "
-			" available from the <a href=\"http://printing.kde.org/\">KDEPrint Website</a> "
-			" at <a href=\"http://printing.kde.org/downloads/\">http://printing.kde.org/downloads/</a>. "
-			" The direct link to the patched source tarball is "
-			" <a href=\"ftp://ftp.kde.org/pub/kde/printing/poster.tar.bz2\">ftp://ftp.kde.org/pub/kde/printing/poster.tar.bz2</a> "
-			" </p> "
+			" provide a patched version of 'poster' if he does not already.</p>"
 			" </qt>" );
 
 	QString whatsThisTileSelectionPosterPage = i18n( " <qt> "
