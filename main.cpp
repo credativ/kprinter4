@@ -23,6 +23,7 @@
 #include <QTranslator>
 #include <QLibraryInfo>
 #include <QMutex>
+#include <QTextStream>
 
 #include <KApplication>
 #include <KAboutData>
@@ -48,9 +49,10 @@
  * 3: All PostScript file(s) invalid. Exit.
  * 4: Page rendering error. Exit.
  * 5: Poster print error. Exit.
+ * 6: Writing temporary file for data from STDIN failed. Exit.
  */
 
-int showPrintDialogAndPrint(const QString &filename,
+int showPrintDialogAndPrint(const QString& filename,
                             const QString& printername,
                             const QString& printtitle,
                             const int numCopies,
@@ -277,8 +279,9 @@ int main(int argc, char *argv[]) {
   options.add("o <argument> <option=value>", ki18n("Printer/Job option(s)"));
   options.add("j <mode>", ki18n("Job output mode (gui, console, none)"), "gui");
   options.add("system <printsys>", ki18n("Print system to use (autodetect, lpd, cups)"), "autodetect");
-  options.add("stdin", ki18n("Allow printing from STDIN"));
+  options.add("stdin", ki18n("Print from STDIN"));
   options.add("nd").add("nodialog", ki18n("Do not show the print dialog (print directly)"));
+  options.add("ofd").add("openfiledialog", ki18n("Show file dialog instead of printing from STDIN."));
   options.add("+[file(s)]", ki18n("PostScript document(s) to print"));
   KCmdLineArgs::addCmdLineOptions(options);
 
@@ -289,7 +292,6 @@ int main(int argc, char *argv[]) {
   KCmdLineArgs *args = KCmdLineArgs::parsedArgs();
 
   if (args->isSet("c")) kWarning() << i18n("Option -c not implemented yet");
-  if (args->isSet("stdin")) kWarning() << i18n("Option --stdin not implemented yet");
 
   QString printer = args->getOption("D");
 
@@ -319,16 +321,40 @@ int main(int argc, char *argv[]) {
   bool nodialog = ((args->getOption("j") != "gui") || !args->isSet("nd"));
 
   QString psFileName;
-  if (args->count()) {
+  KTemporaryFile tmpPSFile;
+  if ((args->count()) && (!args->isSet("stdin"))) {
 
-    if (args->count() > 0)
+    if (args->count() > 1)
       kWarning() << i18n("Found more than one file parameter. Using only the first one.");
 
     psFileName = args->url(0).path();
 
   } else {
 
-    psFileName = KFileDialog::getOpenFileName(KUrl(QDir::homePath()), "*.ps", NULL, i18n("Open PostScript document"));
+    if ((args->isSet("ofd")) && (!args->isSet("stdin"))) {
+
+      psFileName = KFileDialog::getOpenFileName(KUrl(QDir::homePath()), "*.ps", NULL, i18n("Open PostScript document"));
+
+    } else {
+
+      //sync read from stdin
+
+      kWarning() << i18n("Wait for STDIN...");
+
+      QTextStream instream(stdin, QIODevice::ReadOnly);
+      QString doc = instream.readAll();
+
+      tmpPSFile.setSuffix(".ps");
+      if (tmpPSFile.open()) {
+        QTextStream outstream(&tmpPSFile);
+        outstream << doc;
+        psFileName = tmpPSFile.fileName();
+      } else {
+        kDebug() << "Error writing temporary file" << tmpPSFile.fileName();
+        return 6;
+      }
+
+    }
 
   }
 
