@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2014-02-19 13:50+0100\n"
+"POT-Creation-Date: 2014-03-13 16:48+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,144 +16,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-
-#: main.cpp:85 main.cpp:259
-msgid "KPrinter4"
-msgstr ""
-
-#: main.cpp:260
-msgid "Simple PostScript document printer"
-msgstr ""
-
-#: main.cpp:262
-msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
-msgstr ""
-
-#: main.cpp:266
-msgid "Marco Nelles"
-msgstr ""
-
-#: main.cpp:266
-msgid "Current maintainer, main developer"
-msgstr ""
-
-#: main.cpp:267
-msgid "City of Munich"
-msgstr ""
-
-#: main.cpp:267
-msgid "LiMux project"
-msgstr ""
-
-#: main.cpp:268
-msgid "credativ GmbH"
-msgstr ""
-
-#: main.cpp:268
-msgid "credativ GmbH (Germany)"
-msgstr ""
-
-#: main.cpp:273
-msgid "Make an internal copy of the files to print"
-msgstr ""
-
-#: main.cpp:274
-msgid "Printer/destination to print on"
-msgstr ""
-
-#: main.cpp:275
-msgid "Title/Name for the print job"
-msgstr ""
-
-#: main.cpp:276
-msgid "Number of copies"
-msgstr ""
-
-#: main.cpp:277
-msgid "Printer/Job option(s)"
-msgstr ""
-
-#: main.cpp:278
-msgid "Job output mode (gui, console, none)"
-msgstr ""
-
-#: main.cpp:279
-msgid "Print system to use (autodetect, lpd, cups)"
-msgstr ""
-
-#: main.cpp:280
-msgid "Allow printing from STDIN"
-msgstr ""
-
-#: main.cpp:281
-msgid "Do not show the print dialog (print directly)"
-msgstr ""
-
-#: main.cpp:282
-msgid "PostScript document(s) to print"
-msgstr ""
-
-#: main.cpp:291
-msgid "Option -c not implemented yet"
-msgstr ""
-
-#: main.cpp:292
-msgid "Option --stdin not implemented yet"
-msgstr ""
-
-#: main.cpp:309
-msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
-msgstr ""
-
-#: main.cpp:315
-msgid ""
-"Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
-msgstr ""
-
-#: main.cpp:325
-msgid "Found more than one file parameter. Using only the first one."
-msgstr ""
-
-#: main.cpp:331
-msgid "Open PostScript document"
-msgstr ""
-
-#: utils/papersizeutils.cpp:187
-msgid "Portrait"
-msgstr ""
-
-#: utils/papersizeutils.cpp:188
-msgid "Landscape"
-msgstr ""
-
-#: rc.cpp:3 rc.cpp:6
-msgid "Scaling"
-msgstr ""
-
-#: rc.cpp:9
-msgid "&No scaling"
-msgstr ""
-
-#: rc.cpp:12
-msgid "&Fit document to page"
-msgstr ""
-
-#: rc.cpp:15
-msgid "Enlarge smaller pages"
-msgstr ""
-
-#: rc.cpp:18
-msgid "&Scale to:"
-msgstr ""
-
-#: rc.cpp:22
-#, no-c-format
-msgid " %"
-msgstr ""
-
-#: rc.cpp:25
-msgid "Document Position"
-msgstr ""
 
 #: widgets/posterwidget.cpp:41
 msgid " <qt>  5.  </qt>"
@@ -311,4 +173,146 @@ msgid ""
 "Poster preview not available. Either the <b>poster</b> executable is not "
 "properly installed, or you don't have the required version; available at "
 "http://printing.kde.org/downloads/."
+msgstr ""
+
+#: rc.cpp:3 rc.cpp:6
+msgid "Scaling"
+msgstr ""
+
+#: rc.cpp:9
+msgid "&No scaling"
+msgstr ""
+
+#: rc.cpp:12
+msgid "&Fit document to page"
+msgstr ""
+
+#: rc.cpp:15
+msgid "Enlarge smaller pages"
+msgstr ""
+
+#: rc.cpp:18
+msgid "&Scale to:"
+msgstr ""
+
+#: rc.cpp:22
+#, no-c-format
+msgid " %"
+msgstr ""
+
+#: rc.cpp:25
+msgid "Document Position"
+msgstr ""
+
+#: main.cpp:87 main.cpp:261
+msgid "KPrinter4"
+msgstr ""
+
+#: main.cpp:262
+msgid "Simple PostScript document printer"
+msgstr ""
+
+#: main.cpp:264
+msgid "Copyright © 2014 by Marco Nelles (credativ GmbH)"
+msgstr ""
+
+#: main.cpp:268
+msgid "Marco Nelles"
+msgstr ""
+
+#: main.cpp:268
+msgid "Current maintainer, main developer"
+msgstr ""
+
+#: main.cpp:269
+msgid "City of Munich"
+msgstr ""
+
+#: main.cpp:269
+msgid "LiMux project"
+msgstr ""
+
+#: main.cpp:270
+msgid "credativ GmbH"
+msgstr ""
+
+#: main.cpp:270
+msgid "credativ GmbH (Germany)"
+msgstr ""
+
+#: main.cpp:275
+msgid "Make an internal copy of the files to print"
+msgstr ""
+
+#: main.cpp:276
+msgid "Printer/destination to print on"
+msgstr ""
+
+#: main.cpp:277
+msgid "Title/Name for the print job"
+msgstr ""
+
+#: main.cpp:278
+msgid "Number of copies"
+msgstr ""
+
+#: main.cpp:279
+msgid "Printer/Job option(s)"
+msgstr ""
+
+#: main.cpp:280
+msgid "Job output mode (gui, console, none)"
+msgstr ""
+
+#: main.cpp:281
+msgid "Print system to use (autodetect, lpd, cups)"
+msgstr ""
+
+#: main.cpp:282
+msgid "Print from STDIN"
+msgstr ""
+
+#: main.cpp:283
+msgid "Do not show the print dialog (print directly)"
+msgstr ""
+
+#: main.cpp:284
+msgid "Show file dialog instead of printing from STDIN."
+msgstr ""
+
+#: main.cpp:285
+msgid "PostScript document(s) to print"
+msgstr ""
+
+#: main.cpp:294
+msgid "Option -c not implemented yet"
+msgstr ""
+
+#: main.cpp:311
+msgid "Unknown value \"%1\" for option -j. Using default value \"gui\"."
+msgstr ""
+
+#: main.cpp:317
+msgid ""
+"Unknown value \"%1\" for option --system. Using default value \"autodetect\"."
+msgstr ""
+
+#: main.cpp:328
+msgid "Found more than one file parameter. Using only the first one."
+msgstr ""
+
+#: main.cpp:336
+msgid "Open PostScript document"
+msgstr ""
+
+#: main.cpp:342
+msgid "Wait for STDIN..."
+msgstr ""
+
+#: utils/papersizeutils.cpp:187
+msgid "Portrait"
+msgstr ""
+
+#: utils/papersizeutils.cpp:188
+msgid "Landscape"
 msgstr ""
