@@ -2,7 +2,7 @@ project(kprinter4)
 
 cmake_minimum_required(VERSION 2.8)
 
-set(KPRINTER4_VERSION "12")
+set(KPRINTER4_VERSION "13")
 set(LIBSPECTRE_MINIMUM_VERSION "0.2")
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules)
