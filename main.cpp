@@ -273,7 +273,7 @@ int main(int argc, char *argv[]) {
 
   KCmdLineOptions options;
   options.add("c", ki18n("Make an internal copy of the files to print"));
-  options.add("p").add("D <printer>", ki18n("Printer/destination to print on"));
+  options.add("P").add("d <printer>", ki18n("Printer/destination to print on"));
   options.add("J").add("t <title>", ki18n("Title/Name for the print job"));
   options.add("#").add("n <number>", ki18n("Number of copies"), "1");
   options.add("o <argument> <option=value>", ki18n("Printer/Job option(s)"));
@@ -293,7 +293,7 @@ int main(int argc, char *argv[]) {
 
   if (args->isSet("c")) kWarning() << i18n("Option -c not implemented yet");
 
-  QString printer = args->getOption("D");
+  QString printer = args->getOption("d");
 
   QString title = args->getOption("t");
 
@@ -361,8 +361,8 @@ int main(int argc, char *argv[]) {
   if (psFileName.isEmpty()) return 2;
 
   return showPrintDialogAndPrint(psFileName,
-        args->getOption("D"),
-        args->getOption("t"),
+        printer,
+        title,
         numCopies,
         printerOptions,
         nodialog,
